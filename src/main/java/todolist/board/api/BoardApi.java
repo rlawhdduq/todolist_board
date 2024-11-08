@@ -41,7 +41,7 @@ public class BoardApi {
     /*
      * 이것도 전체 게시글 조회에서 만들어진 로직에 + board_id만 넣으면 된다.
      */
-    @GetMapping("/api/board/{id}")
+    @GetMapping("/api/board/{board_id}")
     public String getOneMethodName(@PathVariable Long board_id, @RequestBody String param) {
         return new String();
     }
@@ -57,13 +57,13 @@ public class BoardApi {
      *  - ToDo를 수정할 수 있게 할것인가도 확실하게 정해야할거같다.
      * 2. ToDo완료로 이행 완료 처리
      */
-    @PutMapping("/api/board/{id}")
+    @PutMapping("/api/board/{board_id}")
     public Long putMethodName(@PathVariable Long board_id, @RequestBody BoardDto boardDto) {
         boardService.update(boardDto);
         return board_id;
     }
 
-    @DeleteMapping("/api/board/{id}")
+    @DeleteMapping("/api/board/{board_id}")
     public void deleteMethodName(@PathVariable Long board_id)
     {
         boardService.delete(board_id);

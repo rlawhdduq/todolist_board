@@ -1,4 +1,4 @@
-package todolist.board.redis;
+package todolist.board.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;

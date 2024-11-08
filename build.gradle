@@ -24,12 +24,18 @@ repositories {
 }
 
 dependencies {
+
+    implementation 'org.springframework.kafka:spring-kafka' // Spring Kafka 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-actuator' // Spring Boot Actuator (모니터링 용도)
+    implementation 'org.springframework.boot:spring-boot-starter-logging' // Gradle 빌드 시 사용
+
 	implementation 'mysql:mysql-connector-java'
 	implementation 'mysql:mysql-connector-java:8.0.33'
 	
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-cache'  // 캐시 관련 기능 추가
@@ -39,6 +45,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	
 }
 
 tasks.named('test') {

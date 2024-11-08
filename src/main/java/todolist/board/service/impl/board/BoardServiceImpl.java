@@ -3,14 +3,21 @@ package todolist.board.service.impl.board;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import todolist.board.dto.board.BoardDto;
 import todolist.board.service.BoardService;
+import todolist.board.service.KafkaProducer;
+import todolist.board.service.RedisService;
 
 @Service
 public class BoardServiceImpl implements BoardService{
     
+    private RedisService redisService;
+    private KafkaProducer kafkaProducer;
+    @Value("${f.service.url}")
+    private String followUrl;
     @Override
     public Long insert(BoardDto boardDto)
     {
@@ -49,39 +56,34 @@ public class BoardServiceImpl implements BoardService{
      * Q. 위에서 A가 없는이유? 전체공개라서, CC의 경우 A를 볼 수 없기떄문에 친구목록 조회 시 거를 것임
      */
     @Override
-    public List<BoardDto> selectAll()
+    public List<BoardDto> selectBoardAll(Long user_id)
     {
-        List<BoardDto> boardList =  new ArrayList<>();
-        return boardList;
-    }
-
-    @Override
-    public List<BoardDto> selectUserAll(Long user_id)
-    {
+        isThereCache(user_id);
         List<BoardDto> boardList = new ArrayList<>();
         return boardList;
     }
 
     @Override
-    public BoardDto selectUserOne(BoardDto boardDto)
+    public BoardDto detailBoard(Long user_id)
     {
+        BoardDto boardDto = new BoardDto();
         return boardDto;
     }
 
     private void isThereCache(Long user_id)
     {
-        /*
-         * user_id에 해당하는 친구목록 캐시가 있는지 조회
-         */
+        if(!redisService.existKey(user_id.toString()))
+        {
+            userList(user_id);
+        }
     }
 
-    private List<Long> userList()
+    private void userList(Long user_id)
     {
-        List<Long> userList = new ArrayList<>();
         /*
          * 캐시 조회 후 저장 
          */
-        return userList;
+        kafkaProducer.sendMessage("follow", user_id.toString());
     }
 
 }

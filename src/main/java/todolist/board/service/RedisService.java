@@ -4,6 +4,6 @@ public interface RedisService {
     
     void setRedis(String key, Object value);
     Object getRedis(String key);
-    Boolean isThereKey(String key);
+    Boolean existKey(String key);
 
 }
