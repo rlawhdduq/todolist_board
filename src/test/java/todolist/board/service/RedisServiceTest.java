@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import todolist.board.dto.redis.RedisUserListDto;
+
 @SpringBootTest
 public class RedisServiceTest {
 
@@ -19,8 +21,8 @@ public class RedisServiceTest {
     
     @Autowired
     private RedisService redisService;
-    private String user_id = "user_id:5162553";
-    @Test
+    private String user_id = "100";
+    // @Test
     public void setRedisTest()
     {
         List<Long> userList = LongStream.range(1, 100)
@@ -33,23 +35,14 @@ public class RedisServiceTest {
     @Test
     public void getRedisTest()
     {
-        List<Long> userList = (List<Long>)redisService.getRedis(user_id);
-        for(Long users : userList)
+        log.info("테스트시작");
+        RedisUserListDto userList = new RedisUserListDto();
+        userList.setUserList((List<Long>) redisService.getRedis(user_id));
+        userList.setUser_id(Long.parseLong(user_id));
+        for(Long users : userList.getUserList())
         {
             log.info("볼까? " + users);
         }
-    }
-
-    @Test
-    public void isThereKeyTest()
-    {
-        if(redisService.isThereKey(user_id))
-        {
-            log.info("있네요~");
-        }
-        else
-        {
-            log.info("없네요~");
-        }
+        log.info("테스트종료");
     }
 }

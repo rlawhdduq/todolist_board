@@ -3,34 +3,48 @@ package todolist.board.service.impl.board;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import todolist.board.dto.board.BoardDto;
+import todolist.board.dto.redis.RedisUserListDto;
 import todolist.board.service.BoardService;
-import todolist.board.service.KafkaProducer;
 import todolist.board.service.RedisService;
 
 @Service
 public class BoardServiceImpl implements BoardService{
     
+    @Autowired
     private RedisService redisService;
-    private KafkaProducer kafkaProducer;
-    @Value("${f.service.url}")
+    private static final Logger log = LoggerFactory.getLogger(BoardServiceImpl.class);
+    @Autowired
+    private WebClient webClient;
+
+    @Value("${service.url}")
     private String followUrl;
+
     @Override
-    public Long insert(BoardDto boardDto)
+    @KafkaListener(topics = "board-insert", groupId = "board")
+    public void insert(BoardDto boardDto)
     {
-        return 0L;
+
     }
 
     @Override
+    @KafkaListener(topics = "board-update", groupId = "board")
     public void update(BoardDto boardDto)
     {
 
     }
 
     @Override
+    @KafkaListener(topics = "board-update", groupId = "board")
     public void delete(Long user_id)
     {
 
@@ -82,8 +96,13 @@ public class BoardServiceImpl implements BoardService{
     {
         /*
          * 캐시 조회 후 저장 
+         * Restful
          */
-        kafkaProducer.sendMessage("follow", user_id.toString());
+        RedisUserListDto userList = webClient.get()
+                                        .uri(followUrl+"/{user_id}", user_id)
+                                        .retrieve()
+                                        .bodyToMono(new ParameterizedTypeReference<RedisUserListDto>() {}).block();
+        redisService.setRedis(userList.getUser_id().toString(), (List<Long>) userList.getUserList());
     }
 
 }

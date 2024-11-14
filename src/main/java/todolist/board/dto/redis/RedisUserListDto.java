@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RedisDto {
+public class RedisUserListDto {
     
     private Long user_id;
     private List<Long> userList;
