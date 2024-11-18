@@ -31,7 +31,9 @@ public class Todolist {
     @Column(nullable = false)
     private String todo_type_detail;
     @Column(nullable = false)
-    private Short todo_unit;
+    private String todo_unit;
+    @Column(nullable = false)
+    private Short todo_number;
     @Column(insertable = false, updatable = true)
     private Character fulfillment_or_not;
     @Column(insertable = false, updatable = true)

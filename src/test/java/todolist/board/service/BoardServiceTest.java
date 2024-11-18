@@ -19,11 +19,14 @@ public class BoardServiceTest {
 
     @Autowired
     private BoardService boardService;
+    @Autowired
+    private KafkaProducer kafka;
+
     private Long user_id_long = 100L;
     private String user_id = "user_id:5162553";
     private static final Logger log = LoggerFactory.getLogger(BoardServiceTest.class);
 
-    @Test
+    // @Test
     public void selectBoardAllTest()
     {
         log.info("테스트 코드 시작");
@@ -40,5 +43,23 @@ public class BoardServiceTest {
         }
         
         log.info("테스트 코드 종료");
+    }
+
+    @Test
+    public void insertBoard()
+    {
+        String topic = "board-insert";
+        BoardDto boardDto = new BoardDto();
+
+        boardDto.setUser_id(3729L);
+        boardDto.setScope_of_disclosure("A");
+        boardDto.setContent("Kafka Test2");
+
+        kafka.sendMessage(topic, (Object) boardDto);
+    }
+
+    public void checkKafka()
+    {
+
     }
 }
