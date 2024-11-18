@@ -15,8 +15,8 @@ public class TodolistDto {
     private LocalDateTime create_time;
     private String todo_type;
     private String todo_type_detail;
-    private Short todo_number;
     private String todo_unit;
+    private Short todo_number;
     private Character fulfillment_or_not;
     private Character status;
     private LocalDateTime update_time;
