@@ -1,8 +1,10 @@
 package todolist.board.service.impl.board;
 
 import java.util.List;
+import java.util.Optional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
 
 import todolist.board.domain.Board;
+import todolist.board.dto.delete.DetailDeleteDto;
+import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.board.BoardDto;
 import todolist.board.dto.redis.RedisUserListDto;
 import todolist.board.dto.todolist.TodolistDto;
@@ -26,8 +33,11 @@ import todolist.board.service.TodolistService;
 @Service
 public class BoardServiceImpl implements BoardService{
     
+    @Autowired
     private RedisService redisService;
+    @Autowired
     private TodolistService todolistService;
+    @Autowired
     private ReplyService replyService;
 
     @Autowired
@@ -40,6 +50,7 @@ public class BoardServiceImpl implements BoardService{
     @Value("${service.url}")
     private String followUrl;
 
+    // Kafka
     @Override
     @KafkaListener
     (
@@ -47,25 +58,18 @@ public class BoardServiceImpl implements BoardService{
         groupId = "board",
         containerFactory = "boardDtoKafkaListenerContainerFactory"
     )
-    public void insert(BoardDto boardDto)
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void insert(BoardDto boardDto, Acknowledgment ack)
     {
-        log.info("insert 진입");
         Board insBoard = Board.builder()
                               .user_id(boardDto.getUser_id())
                               .scope_of_disclosure(boardDto.getScope_of_disclosure())
                               .content(boardDto.getContent())
                               .build();
-        boardRepository.save(insBoard);
-        // 여기서 pk추출후 todolist 호출
-        Long insBoardPk = insBoard.getBoard_id();
+        repoINS(insBoard, boardDto);
 
-        log.info("insert 완료 : " + insBoardPk.toString());
-        for(TodolistDto todolist : boardDto.getTodolist())
-        {
-            todolist.setBoard_id(insBoardPk);
-            todolistService.insert(todolist);
-        }
-        log.info("insert 퇴장");
+        
+        ack.acknowledge();
     }
 
     @Override
@@ -75,22 +79,22 @@ public class BoardServiceImpl implements BoardService{
         groupId = "board",
         containerFactory = "boardDtoKafkaListenerContainerFactory"
     )
-    public void update(BoardDto boardDto)
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void update(BoardDto boardDto, Acknowledgment ack)
     {
         Board updBoard = Board.builder()
                               .board_id(boardDto.getBoard_id())
+                              .user_id(boardDto.getUser_id())
                               .scope_of_disclosure(boardDto.getScope_of_disclosure())
                               .fulfillment_or_not(boardDto.getFulfillment_or_not())
+                              .fulfillment_time(boardDto.getFulfillment_time())
                               .content(boardDto.getContent())
                               .update_time(LocalDateTime.now())
                               .build();
-        boardRepository.save(updBoard);
+        repoUPD(updBoard, boardDto);
 
-        for(TodolistDto todolist : boardDto.getTodolist())
-        {
-            todolist.setBoard_id(boardDto.getBoard_id());
-            todolistService.update(todolist);
-        }
+        
+        ack.acknowledge();
     }
 
     @Override
@@ -98,23 +102,34 @@ public class BoardServiceImpl implements BoardService{
     (
         topics = "board-delete", 
         groupId = "board",
-        containerFactory = "longKafkaListenerContainerFactory"
+        containerFactory = "delKafkaListenerContainerFactory"
     )
-    public void delete(Long board_id)
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void delete(DeleteDto deleteDto, Acknowledgment ack)
     {
         /**
-         *  Todo먼저 지우고 댓글 지우고 게시글
+         *  Todo -> reply -> board
          */
-        todolistService.delete(board_id);
-        replyService.delete(board_id);
-        Board delBoard = Board.builder()
-                              .board_id(board_id)
-                              .status('N')
-                              .build();
-
-        boardRepository.save(delBoard);
+        repoDel(deleteDto);
+        ack.acknowledge();
     }
 
+    @Override
+    @KafkaListener
+    (
+        topics = "board-delete-detail",
+        groupId = "board",
+        containerFactory = "detailDelKafkaListenerContainerFactory"
+    )
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void detailDelete(DetailDeleteDto detailDeleteDto, Acknowledgment ack)
+    {
+        /**
+         * Todo -> reply -> board
+         */
+        repoDetailDel(detailDeleteDto);
+        ack.acknowledge();
+    }
     /*
      * 게시글 조회의 경우 로직이 복잡하다.
      * 회원유형과 친구관계가 얽혀있기때문이다.
@@ -147,6 +162,49 @@ public class BoardServiceImpl implements BoardService{
     {
         BoardDto boardDto = new BoardDto();
         return boardDto;
+    }
+
+    // Private Method
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void repoINS(Board board, BoardDto boardDto)
+    {
+        boardRepository.save(board);
+        if( !Optional.ofNullable(boardDto.getTodolist()).orElse(Collections.emptyList()).isEmpty() )
+        {
+            for(TodolistDto todolist : boardDto.getTodolist())
+            {
+                todolist.setBoard_id(board.getBoard_id());
+                todolistService.insert(todolist);
+            }
+        }
+    }
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void repoUPD(Board board, BoardDto boardDto)
+    {
+        boardRepository.save(board);
+        if( !Optional.ofNullable(boardDto.getTodolist()).orElse(Collections.emptyList()).isEmpty() )
+        {
+            for(TodolistDto todolist : boardDto.getTodolist())
+            {
+                todolist.setBoard_id(boardDto.getBoard_id());
+                todolistService.update(todolist);
+            }
+        }
+    }
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void repoDel(DeleteDto deleteDto)
+    {
+        todolistService.delete(deleteDto.getKey());
+        replyService.delete(deleteDto.getKey());
+        boardRepository.deleteByBoardUserId(deleteDto.getKey(), deleteDto.getForeign_key());
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void repoDetailDel(DetailDeleteDto detailDeleteDto)
+    {
+        todolistService.detailDelete(detailDeleteDto.getKey_list());
+        replyService.detailDelete(detailDeleteDto.getKey_list());
+        boardRepository.detailDelete(detailDeleteDto.getKey_list(), detailDeleteDto.getForeign_key());
     }
 
     private void isThereCache(Long user_id)
