@@ -14,10 +14,10 @@ import todolist.board.domain.Todolist;
 public interface TodolistRepository extends JpaRepository<Todolist, Long>{
 
     @Modifying
-    @Query(value = "Update todolist set status = 'N' where board_id = :board_id", nativeQuery = true)
+    @Query(value = "Update todolist set status = 'N', update_time = current_timestamp where board_id = :board_id and status = 'Y'", nativeQuery = true)
     void deleteByBoardId(@Param("board_id") Long board_id);
 
     @Modifying
-    @Query(value = "Update todolist Set status = 'N' Where todolist_id in (:todolist_id_list)", nativeQuery = true)
-    void deleteDetail(@Param("todolist_id_list") List<Long> todolist_id_list);
+    @Query(value = "Update todolist Set status = 'N', update_time = current_timestamp Where board_id in (:board_id_list) and status = 'Y'", nativeQuery = true)
+    void detailDeleteByBoardId(@Param("board_id_list") List<Long> board_id_list);
 }
