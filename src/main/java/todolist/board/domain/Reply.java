@@ -8,13 +8,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Builder
 @Table(name = "reply")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Reply {
 
     @Id
@@ -30,9 +34,9 @@ public class Reply {
     private String content;
     @Column(insertable = false, updatable = true)
     private Short reply_depth;
-    @Column(insertable = false, updatable = true)
+    @Column(insertable = false, updatable = false)
     private LocalDateTime create_time;
-    @Column(insertable = false, updatable = true)
+    @Column(insertable = false, updatable = false)
     private Character status;
     @Column(insertable = false, updatable = true)
     private LocalDateTime update_time;
