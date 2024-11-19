@@ -16,4 +16,9 @@ public class KafkaProducer {
     {
         kafkaTemplate.send(topic, msg);
     }
+
+    public void sendMessage(String topic, Long msg)
+    {
+        kafkaTemplate.send(topic, msg);
+    }
 }

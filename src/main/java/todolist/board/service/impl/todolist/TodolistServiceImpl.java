@@ -5,19 +5,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 import todolist.board.domain.Todolist;
+import todolist.board.dto.delete.DeleteDto;
+import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.todolist.TodolistDto;
 import todolist.board.repository.TodolistRepository;
 import todolist.board.service.TodolistService;
 
+@Service
 public class TodolistServiceImpl implements TodolistService{
     
     @Autowired
     private TodolistRepository todolistRepository;
 
-    @Transactional
     @Override
     public void insert(TodolistDto todolistDto)
     {
@@ -31,7 +37,6 @@ public class TodolistServiceImpl implements TodolistService{
         todolistRepository.save(insTodolist);
     }
 
-    @Transactional
     @Override
     public void update(TodolistDto todolistDto)
     {
@@ -47,18 +52,75 @@ public class TodolistServiceImpl implements TodolistService{
         todolistRepository.save(updTodolist);
     }
 
-    @Transactional
-    @Override 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void delete(Long board_id)
     {
         todolistRepository.deleteByBoardId(board_id);
     }
 
-    @Transactional
     @Override
-    public void delete(List<Long> todolist_id_list)
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void detailDelete(List<Long> board_id_list)
     {
-        todolistRepository.deleteDetail(todolist_id_list);
+        todolistRepository.detailDeleteByBoardId(board_id_list);
+    }
+
+    @Override
+    @KafkaListener
+    (
+        topics = "todolist-insert",
+        groupId = "board",
+        containerFactory = "todolistDtoKafkaListenerContainerFactory"
+    )
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void insert(TodolistDto todolistDto, Acknowledgment ack)
+    {
+        Todolist insTodolist = Todolist.builder().build();
+        repoSave(insTodolist);
+        ack.acknowledge();
+    }
+
+    @Override
+    @KafkaListener
+    (
+        topics = "todolist-update",
+        groupId = "board",
+        containerFactory = "todolistDtoKafkaListenerContainerFactory"
+    )
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void update(TodolistDto todolistDto, Acknowledgment ack)
+    {
+        Todolist insTodolist = Todolist.builder().build();
+        repoSave(insTodolist);
+        ack.acknowledge();
+    }
+
+    @Override
+    @KafkaListener
+    (
+        topics = "todolist-delete",
+        groupId = "board",
+        containerFactory = "delKafkaListenerContainerFactory"
+    )
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void delete(DeleteDto deleteDto, Acknowledgment ack)
+    {
+        // todolistRepository.deleteDetail(todolist_id_list);
+        ack.acknowledge();
+    }
+
+    @Override
+    @KafkaListener
+    (
+        topics = "todolist-delete-detail",
+        groupId = "board",
+        containerFactory = "detailDelKafkaListenerContainerFactory"
+    )
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void detailDelete(DetailDeleteDto detailDeleteDto, Acknowledgment ack)
+    {
+        ack.acknowledge();
     }
 
     @Override
@@ -66,5 +128,12 @@ public class TodolistServiceImpl implements TodolistService{
     {
         List<TodolistDto> todolists = new ArrayList<>();
         return todolists;
+    }
+
+    // Private Method
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void repoSave(Todolist todolist)
+    {
+        todolistRepository.save(todolist);
     }
 }

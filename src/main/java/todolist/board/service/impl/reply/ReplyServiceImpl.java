@@ -6,10 +6,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 import todolist.board.domain.Reply;
+import todolist.board.dto.delete.DeleteDto;
+import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.reply.ReplyDto;
 import todolist.board.repository.ReplyRepository;
 import todolist.board.service.ReplyService;
@@ -20,7 +24,20 @@ public class ReplyServiceImpl implements ReplyService{
     @Autowired
     private ReplyRepository replyRepository;
 
-    @Transactional
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void delete(Long board_id)
+    {
+        replyRepository.deleteByBoardId(board_id);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void detailDelete(List<Long> board_id_list)
+    {
+        replyRepository.detailDeleteByBoardId(board_id_list);
+    }
+
     @Override
     @KafkaListener
     (
@@ -28,16 +45,17 @@ public class ReplyServiceImpl implements ReplyService{
         groupId = "board",
         containerFactory = "replyDtoKafkaListenerContainerFactory"
     )
-    public void insert(ReplyDto replyDto)
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void insert(ReplyDto replyDto, Acknowledgment ack)
     {
         Reply insReply = Reply.builder()
                               .board_id(replyDto.getBoard_id())
                               .user_id(replyDto.getUser_id())
                               .build();
-        replyRepository.save(insReply);
+        repoSave(insReply);
+        ack.acknowledge();
     }
     
-    @Transactional
     @Override
     @KafkaListener
     (
@@ -45,7 +63,8 @@ public class ReplyServiceImpl implements ReplyService{
         groupId = "board",
         containerFactory = "replyDtoKafkaListenerContainerFactory"
     )
-    public void update(ReplyDto replyDto)
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void update(ReplyDto replyDto, Acknowledgment ack)
     {
         Short reply_depth = replyDto.getReply_depth();
         Reply insReply = Reply.builder()
@@ -54,33 +73,36 @@ public class ReplyServiceImpl implements ReplyService{
                               .reply_depth(reply_depth++)
                               .update_time(LocalDateTime.now())
                               .build();
-        replyRepository.save(insReply);
+        repoSave(insReply);
+        ack.acknowledge();
     }
 
-    @Transactional
     @Override
     @KafkaListener
     (
         topics = "reply-delete", 
         groupId = "board",
-        containerFactory = "longKafkaListenerContainerFactory"
+        containerFactory = "delKafkaListenerContainerFactory"
     )
-    public void delete(Long board_id)
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void delete(DeleteDto deleteDto, Acknowledgment ack)
     {
-        replyRepository.deleteByBoardId(board_id);
+        // replyRepository.deleteByBoardId(board_id);
+        ack.acknowledge();
     }
 
-    @Transactional
     @Override
     @KafkaListener
     (
         topics = "reply-delete-detail", 
         groupId = "board",
-        containerFactory = "longKafkaListenerContainerFactory"
+        containerFactory = "detailDelKafkaListenerContainerFactory"
     )
-    public void delete(List<Long> reply_id_list)
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void detailDelete(DetailDeleteDto detailDeleteDto, Acknowledgment ack)
     {
-        replyRepository.deleteDetail(reply_id_list);
+        // replyRepository.deleteDetail(reply_id_list);
+        ack.acknowledge();
     }
 
     @Override
@@ -88,5 +110,12 @@ public class ReplyServiceImpl implements ReplyService{
     {
         List<ReplyDto> replyList = new ArrayList<>();
         return replyList;
+    }
+
+    // Private Method
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void repoSave(Reply reply)
+    {
+        replyRepository.save(reply);
     }
 }

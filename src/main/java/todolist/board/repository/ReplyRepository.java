@@ -14,10 +14,10 @@ import todolist.board.domain.Reply;
 public interface ReplyRepository extends JpaRepository<Reply, Long>{
 
     @Modifying
-    @Query(value = "Update reply set status = 'N' Where board_id = :board_id", nativeQuery = true)
+    @Query(value = "Update reply set status = 'N', update_time = current_timestamp Where board_id = :board_id and status = 'Y'", nativeQuery = true)
     void deleteByBoardId(@Param("board_id") Long board_id);
 
     @Modifying
-    @Query(value = "Update reply Set status = 'N' Where reply_id in (:reply_id_list)", nativeQuery = true)
-    void deleteDetail(@Param("reply_id_list") List<Long> reply_id_list);
+    @Query(value = "Update reply Set status = 'N', update_time = current_timestamp Where board_id in (:board_id_list) and status = 'Y'", nativeQuery = true)
+    void detailDeleteByBoardId(@Param("board_id_list") List<Long> board_id_list);
 }

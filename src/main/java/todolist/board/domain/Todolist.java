@@ -8,13 +8,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Builder
 @Table(name = "todolist")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Todolist {
 
     @Id
@@ -24,7 +28,7 @@ public class Todolist {
 
     @Column
     private Long board_id;
-    @Column(insertable = false, updatable = true)
+    @Column(insertable = false, updatable = false)
     private LocalDateTime create_time;
     @Column(nullable = false)
     private String todo_type;
@@ -36,7 +40,7 @@ public class Todolist {
     private Short todo_number;
     @Column(insertable = false, updatable = true)
     private Character fulfillment_or_not;
-    @Column(insertable = false, updatable = true)
+    @Column(insertable = false, updatable = false)
     private Character status;
     @Column(insertable = false, updatable = true)
     private LocalDateTime update_time;
