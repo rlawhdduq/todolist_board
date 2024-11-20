@@ -51,7 +51,6 @@ public class BoardServiceImpl implements BoardService{
     private String followUrl;
 
     // Kafka
-    @Override
     @KafkaListener
     (
         topics = "board-insert", 
@@ -72,7 +71,6 @@ public class BoardServiceImpl implements BoardService{
         ack.acknowledge();
     }
 
-    @Override
     @KafkaListener
     (
         topics = "board-update",
@@ -97,7 +95,6 @@ public class BoardServiceImpl implements BoardService{
         ack.acknowledge();
     }
 
-    @Override
     @KafkaListener
     (
         topics = "board-delete", 
@@ -114,7 +111,6 @@ public class BoardServiceImpl implements BoardService{
         ack.acknowledge();
     }
 
-    @Override
     @KafkaListener
     (
         topics = "board-delete-detail",

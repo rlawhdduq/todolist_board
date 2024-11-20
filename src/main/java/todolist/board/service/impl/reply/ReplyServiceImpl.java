@@ -38,7 +38,6 @@ public class ReplyServiceImpl implements ReplyService{
         replyRepository.detailDeleteByBoardId(board_id_list);
     }
 
-    @Override
     @KafkaListener
     (
         topics = "reply-insert", 
@@ -56,7 +55,6 @@ public class ReplyServiceImpl implements ReplyService{
         ack.acknowledge();
     }
     
-    @Override
     @KafkaListener
     (
         topics = "reply-update", 
@@ -77,7 +75,6 @@ public class ReplyServiceImpl implements ReplyService{
         ack.acknowledge();
     }
 
-    @Override
     @KafkaListener
     (
         topics = "reply-delete", 
@@ -91,7 +88,6 @@ public class ReplyServiceImpl implements ReplyService{
         ack.acknowledge();
     }
 
-    @Override
     @KafkaListener
     (
         topics = "reply-delete-detail", 

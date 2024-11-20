@@ -66,7 +66,6 @@ public class TodolistServiceImpl implements TodolistService{
         todolistRepository.detailDeleteByBoardId(board_id_list);
     }
 
-    @Override
     @KafkaListener
     (
         topics = "todolist-insert",
@@ -81,7 +80,6 @@ public class TodolistServiceImpl implements TodolistService{
         ack.acknowledge();
     }
 
-    @Override
     @KafkaListener
     (
         topics = "todolist-update",
@@ -96,7 +94,6 @@ public class TodolistServiceImpl implements TodolistService{
         ack.acknowledge();
     }
 
-    @Override
     @KafkaListener
     (
         topics = "todolist-delete",
@@ -110,7 +107,6 @@ public class TodolistServiceImpl implements TodolistService{
         ack.acknowledge();
     }
 
-    @Override
     @KafkaListener
     (
         topics = "todolist-delete-detail",
