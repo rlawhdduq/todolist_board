@@ -2,6 +2,8 @@ package todolist.board.domain;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "reply")
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicUpdate
 public class Reply {
 
     @Id
@@ -31,8 +34,10 @@ public class Reply {
     @Column
     private Long user_id;
     @Column
+    private Long parent_id;
+    @Column
     private String content;
-    @Column(insertable = false, updatable = true)
+    @Column(insertable = true, updatable = false)
     private Short reply_depth;
     @Column(insertable = false, updatable = false)
     private LocalDateTime create_time;

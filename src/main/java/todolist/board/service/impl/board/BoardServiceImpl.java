@@ -29,10 +29,13 @@ import todolist.board.service.BoardService;
 import todolist.board.service.RedisService;
 import todolist.board.service.ReplyService;
 import todolist.board.service.TodolistService;
+import todolist.board.service.KafkaProducer;
 
 @Service
 public class BoardServiceImpl implements BoardService{
     
+    private static final Logger log = LoggerFactory.getLogger(BoardServiceImpl.class);
+
     @Autowired
     private RedisService redisService;
     @Autowired
@@ -43,13 +46,36 @@ public class BoardServiceImpl implements BoardService{
     @Autowired
     private BoardRepository boardRepository;
 
-    private static final Logger log = LoggerFactory.getLogger(BoardServiceImpl.class);
     @Autowired
     private WebClient webClient;
+
+    @Autowired
+    private KafkaProducer kafka;
 
     @Value("${service.url}")
     private String followUrl;
 
+    @Override
+    public void insert(BoardDto boardDto)
+    {
+        callKafka("board-insert", (Object) boardDto);
+    }
+    @Override
+    public void update(BoardDto boardDto)
+    {
+        callKafka("board-update", (Object) boardDto);
+    }
+    @Override
+    public void delete(DeleteDto deleteDto)
+    {
+        callKafka("board-delete", (Object) deleteDto);
+    }
+    @Override
+    public void detailDelete(DetailDeleteDto detailDeleteDto)
+    {
+        callKafka("board-delete-detail", (Object) detailDeleteDto);
+    }
+    
     // Kafka
     @KafkaListener
     (
@@ -161,6 +187,11 @@ public class BoardServiceImpl implements BoardService{
     }
 
     // Private Method
+    private void callKafka(String topic, Object dto)
+    {
+        kafka.sendMessage(topic, dto);
+    }
+
     @Transactional(propagation = Propagation.REQUIRED)
     private void repoINS(Board board, BoardDto boardDto)
     {
@@ -170,7 +201,7 @@ public class BoardServiceImpl implements BoardService{
             for(TodolistDto todolist : boardDto.getTodolist())
             {
                 todolist.setBoard_id(board.getBoard_id());
-                todolistService.insert(todolist);
+                todolistService.insertFromBoard(todolist);
             }
         }
     }
@@ -183,23 +214,23 @@ public class BoardServiceImpl implements BoardService{
             for(TodolistDto todolist : boardDto.getTodolist())
             {
                 todolist.setBoard_id(boardDto.getBoard_id());
-                todolistService.update(todolist);
+                todolistService.updateFromBoard(todolist);
             }
         }
     }
     @Transactional(propagation = Propagation.REQUIRED)
     private void repoDel(DeleteDto deleteDto)
     {
-        todolistService.delete(deleteDto.getKey());
-        replyService.delete(deleteDto.getKey());
+        todolistService.deleteFromBoard(deleteDto.getKey());
+        replyService.deleteFromBoard(deleteDto.getKey());
         boardRepository.deleteByBoardUserId(deleteDto.getKey(), deleteDto.getForeign_key());
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     private void repoDetailDel(DetailDeleteDto detailDeleteDto)
     {
-        todolistService.detailDelete(detailDeleteDto.getKey_list());
-        replyService.detailDelete(detailDeleteDto.getKey_list());
+        todolistService.detailDeleteFromBoard(detailDeleteDto.getKey_list());
+        replyService.detailDeleteFromBoard(detailDeleteDto.getKey_list());
         boardRepository.detailDelete(detailDeleteDto.getKey_list(), detailDeleteDto.getForeign_key());
     }
 

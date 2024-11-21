@@ -1,24 +1,27 @@
 package todolist.board.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import todolist.board.domain.Todolist;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import todolist.board.dto.board.BoardDto;
 import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.todolist.TodolistDto;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class BoardServiceTest {
@@ -27,6 +30,10 @@ public class BoardServiceTest {
     private BoardService boardService;
     @Autowired
     private KafkaProducer kafka;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private Long user_id_long = 100L;
     private String user_id = "user_id:5162553";
@@ -53,63 +60,69 @@ public class BoardServiceTest {
 
     // @Test
     public void insertBoard()
+    throws Exception
     {
-        String topic = "board-insert";
         BoardDto boardDto = new BoardDto();
 
-        boardDto.setUser_id(113729L);
-        boardDto.setScope_of_disclosure("A");
-        boardDto.setContent("Kafka Test55");
+        boardDto.setUser_id(594201L);
+        boardDto.setScope_of_disclosure("C");
+        boardDto.setContent("Rest to Kafka Request Action Test");
+        String insertBoardRequest = objectMapper.writeValueAsString(boardDto);
 
-        kafka.sendMessage(topic, (Object) boardDto);
+        mockMvc.perform(post("/api/board").contentType(MediaType.APPLICATION_JSON).content(insertBoardRequest));
     }
 
     // @Test
     public void updateBoard()
+    throws Exception
     {
-        String topic = "board-update";
-        String ScopeOfDisclosure = "C"; // A, C, F
-        Character FulfillmentOrNot = 'F'; // C, F
-        Long boardId = 1L;
-        Long userId = 1730L;
+        String ScopeOfDisclosure = "A"; // A, C, F
+        Character FulfillmentOrNot = 'C'; // C, F
+        Long boardId = 46L;
+        Long userId = 594201L;
         BoardDto boardDto = new BoardDto();
-
+        String content = "Rest to Kafka Request Action Test";
         boardDto.setBoard_id(boardId);
         boardDto.setUser_id(userId);
         boardDto.setScope_of_disclosure(ScopeOfDisclosure);
         boardDto.setFulfillment_or_not(FulfillmentOrNot);
         boardDto.setFulfillment_time(null);
+        boardDto.setContent(content);
         // boardDto.setContent("크크크 교체되어라 얍!");
-        kafka.sendMessage(topic, (Object) boardDto);
+        String insertBoardRequest = objectMapper.writeValueAsString(boardDto);
+        mockMvc.perform(put("/api/board").contentType(MediaType.APPLICATION_JSON).content(insertBoardRequest));
     }
 
     // @Test
     public void deleteBoard()
+    throws Exception
     {
-        String topic = "board-delete";
-        Long board_id = 44L;
-        Long user_id = 5358L;
+        Long board_id = 46L;
+        Long user_id = 594201L;
         DeleteDto deleteDto = new DeleteDto();
         deleteDto.setKey(board_id);
         deleteDto.setForeign_key(user_id);
-        kafka.sendMessage(topic, (Object) deleteDto);
+        String insertBoardRequest = objectMapper.writeValueAsString(deleteDto);
+        mockMvc.perform(delete("/api/board").contentType(MediaType.APPLICATION_JSON).content(insertBoardRequest));
     }
 
     // @Test
     public void detailDeleteBoard()
+    throws Exception
     {
-        String topic = "board-delete-detail";
         Long user_id = 1729L;
         List<Long> board_id_list = new ArrayList<>();
-        board_id_list.add(1L);
-        board_id_list.add(2L);
-        board_id_list.add(8L);
-        board_id_list.add(5L);
+        Long[] arr = {3L, 4L, 1L, 2L, 8L, 5L};
+        for(Long num : arr)
+        {
+            board_id_list.add(num);
+        }
         DetailDeleteDto detailDeleteDto = new DetailDeleteDto();
         detailDeleteDto.setForeign_key(user_id);
         detailDeleteDto.setKey_list(board_id_list);
 
-        kafka.sendMessage(topic, (Object) detailDeleteDto);
+        String insertBoardRequest = objectMapper.writeValueAsString(detailDeleteDto);
+        mockMvc.perform(delete("/api/board/detail").contentType(MediaType.APPLICATION_JSON).content(insertBoardRequest));
     }
 
     // @Test

@@ -2,6 +2,8 @@ package todolist.board.domain;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "todolist")
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicUpdate
 public class Todolist {
 
     @Id
@@ -30,13 +33,13 @@ public class Todolist {
     private Long board_id;
     @Column(insertable = false, updatable = false)
     private LocalDateTime create_time;
-    @Column(nullable = false)
+    @Column(insertable = true)
     private String todo_type;
-    @Column(nullable = false)
+    @Column(insertable = true)
     private String todo_type_detail;
-    @Column(nullable = false)
+    @Column(insertable = true)
     private String todo_unit;
-    @Column(nullable = false)
+    @Column(insertable = true)
     private Short todo_number;
     @Column(insertable = false, updatable = true)
     private Character fulfillment_or_not;
