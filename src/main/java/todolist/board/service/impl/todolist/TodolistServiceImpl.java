@@ -16,6 +16,7 @@ import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.todolist.TodolistDto;
 import todolist.board.repository.TodolistRepository;
+import todolist.board.service.KafkaProducer;
 import todolist.board.service.TodolistService;
 
 @Service
@@ -23,9 +24,36 @@ public class TodolistServiceImpl implements TodolistService{
     
     @Autowired
     private TodolistRepository todolistRepository;
-
+    @Autowired
+    private KafkaProducer kafka;
+    
     @Override
     public void insert(TodolistDto todolistDto)
+    {
+        callKafka("todolist-insert", (Object) todolistDto);
+        return;
+    }
+    @Override
+    public void update(TodolistDto todolistDto)
+    {
+        callKafka("todolist-update", (Object) todolistDto);
+        return;
+    }
+    @Override
+    public void delete(DeleteDto deleteDto)
+    {
+        callKafka("todolist-delete", (Object) deleteDto);
+        return;
+    }
+    @Override
+    public void detailDelete(DetailDeleteDto detailDeleteDto)
+    {
+        callKafka("todolist-delete-detail", (Object) detailDeleteDto);
+        return;
+    }
+
+    @Override
+    public void insertFromBoard(TodolistDto todolistDto)
     {
         Todolist insTodolist = Todolist.builder()
                                 .board_id(todolistDto.getBoard_id()) // board 인서트 후 이 값을 채워줘야함.
@@ -34,11 +62,11 @@ public class TodolistServiceImpl implements TodolistService{
                                 .todo_unit(todolistDto.getTodo_unit())
                                 .todo_number(todolistDto.getTodo_number())
                                 .build();
-        todolistRepository.save(insTodolist);
+        repoSave(insTodolist);
     }
 
     @Override
-    public void update(TodolistDto todolistDto)
+    public void updateFromBoard(TodolistDto todolistDto)
     {
         Todolist updTodolist = Todolist.builder()
                                        .todolist_id(todolistDto.getTodolist_id())
@@ -49,21 +77,23 @@ public class TodolistServiceImpl implements TodolistService{
                                        .fulfillment_or_not(todolistDto.getFulfillment_or_not())
                                        .update_time(LocalDateTime.now())
                                        .build();
-        todolistRepository.save(updTodolist);
+        repoSave(updTodolist);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public void delete(Long board_id)
+    public void deleteFromBoard(Long board_id)
     {
         todolistRepository.deleteByBoardId(board_id);
+        return;
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public void detailDelete(List<Long> board_id_list)
+    public void detailDeleteFromBoard(List<Long> board_id_list)
     {
-        todolistRepository.detailDeleteByBoardId(board_id_list);
+        todolistRepository.detailDelete(board_id_list);
+        return;
     }
 
     @KafkaListener
@@ -75,7 +105,13 @@ public class TodolistServiceImpl implements TodolistService{
     @Transactional(propagation = Propagation.REQUIRED)
     public void insert(TodolistDto todolistDto, Acknowledgment ack)
     {
-        Todolist insTodolist = Todolist.builder().build();
+        Todolist insTodolist = Todolist.builder()
+                                       .board_id(todolistDto.getBoard_id())
+                                       .todo_type(todolistDto.getTodo_type())
+                                       .todo_type_detail(todolistDto.getTodo_type_detail())
+                                       .todo_unit(todolistDto.getTodo_unit())
+                                       .todo_number(todolistDto.getTodo_number())
+                                       .build();
         repoSave(insTodolist);
         ack.acknowledge();
     }
@@ -89,7 +125,16 @@ public class TodolistServiceImpl implements TodolistService{
     @Transactional(propagation = Propagation.REQUIRED)
     public void update(TodolistDto todolistDto, Acknowledgment ack)
     {
-        Todolist insTodolist = Todolist.builder().build();
+        Todolist insTodolist = Todolist.builder()
+                                       .todolist_id(todolistDto.getTodolist_id())
+                                       .board_id(todolistDto.getBoard_id())
+                                       .todo_type(todolistDto.getTodo_type())
+                                       .todo_type_detail(todolistDto.getTodo_type_detail())
+                                       .todo_unit(todolistDto.getTodo_unit())
+                                       .todo_number(todolistDto.getTodo_number())
+                                       .fulfillment_or_not(todolistDto.getFulfillment_or_not())
+                                       .update_time(LocalDateTime.now())
+                                       .build();
         repoSave(insTodolist);
         ack.acknowledge();
     }
@@ -103,7 +148,7 @@ public class TodolistServiceImpl implements TodolistService{
     @Transactional(propagation = Propagation.REQUIRED)
     public void delete(DeleteDto deleteDto, Acknowledgment ack)
     {
-        // todolistRepository.deleteDetail(todolist_id_list);
+        repoDel(deleteDto);
         ack.acknowledge();
     }
 
@@ -116,6 +161,7 @@ public class TodolistServiceImpl implements TodolistService{
     @Transactional(propagation = Propagation.REQUIRED)
     public void detailDelete(DetailDeleteDto detailDeleteDto, Acknowledgment ack)
     {
+        repoDetailDel(detailDeleteDto);
         ack.acknowledge();
     }
 
@@ -127,9 +173,27 @@ public class TodolistServiceImpl implements TodolistService{
     }
 
     // Private Method
+    private void callKafka(String topic, Object dto)
+    {
+        kafka.sendMessage(topic, dto);
+        return;
+    }
+
     @Transactional(propagation = Propagation.REQUIRED)
     private void repoSave(Todolist todolist)
     {
         todolistRepository.save(todolist);
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void repoDel(DeleteDto deleteDto)
+    {
+        todolistRepository.deleteByTodolistIdBoardId(deleteDto.getKey(), deleteDto.getForeign_key());
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void repoDetailDel(DetailDeleteDto detailDeleteDto)
+    {
+        todolistRepository.detailDelete(detailDeleteDto.getForeign_key(), detailDeleteDto.getKey_list());
     }
 }

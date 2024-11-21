@@ -1,4 +1,4 @@
-package todolist.board.dto.reply;
+package todolist.board.dto.board;
 
 import java.time.LocalDateTime;
 
@@ -7,16 +7,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class ReplyDto {
-    private Long reply_id;
+@AllArgsConstructor
+public class BoardListDto {
     private Long board_id;
     private Long user_id;
-    private Long parent_id;
-    private String content;
-    private Short reply_depth;
+    private String scope_of_disclosure;
     private LocalDateTime create_time;
-    private Character status;
+    private LocalDateTime fulfillment_time;
+    private String content;
     private LocalDateTime update_time;
 }

@@ -16,26 +16,57 @@ import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.reply.ReplyDto;
 import todolist.board.repository.ReplyRepository;
+import todolist.board.service.KafkaProducer;
 import todolist.board.service.ReplyService;
 
 @Service
 public class ReplyServiceImpl implements ReplyService{
 
     @Autowired
+    private KafkaProducer kafka;
+    
+    @Autowired
     private ReplyRepository replyRepository;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void delete(Long board_id)
+    public void insert(ReplyDto replyDto)
     {
-        replyRepository.deleteByBoardId(board_id);
+        callKafka("reply-insert", replyDto);
+        return;
+    }
+    @Override
+    public void update(ReplyDto replyDto)
+    {
+        callKafka("reply-update", replyDto);
+        return;
+    }
+    @Override
+    public void delete(DeleteDto deleteDto)
+    {
+        callKafka("reply-delete", deleteDto);
+        return;
+    }
+    @Override
+    public void detailDelete(DetailDeleteDto detailDeleteDto)
+    {
+        callKafka("reply-delete-detail", detailDeleteDto);
+        return;
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public void detailDelete(List<Long> board_id_list)
+    public void deleteFromBoard(Long board_id)
     {
-        replyRepository.detailDeleteByBoardId(board_id_list);
+        replyRepository.deleteByBoardId(board_id);
+        return;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void detailDeleteFromBoard(List<Long> board_id_list)
+    {
+        replyRepository.detailDelete(board_id_list);
+        return;
     }
 
     @KafkaListener
@@ -50,6 +81,9 @@ public class ReplyServiceImpl implements ReplyService{
         Reply insReply = Reply.builder()
                               .board_id(replyDto.getBoard_id())
                               .user_id(replyDto.getUser_id())
+                              .parent_id(replyDto.getParent_id())
+                              .reply_depth(replyDto.getReply_depth())
+                              .content(replyDto.getContent())
                               .build();
         repoSave(insReply);
         ack.acknowledge();
@@ -64,11 +98,13 @@ public class ReplyServiceImpl implements ReplyService{
     @Transactional(propagation = Propagation.REQUIRED)
     public void update(ReplyDto replyDto, Acknowledgment ack)
     {
-        Short reply_depth = replyDto.getReply_depth();
         Reply insReply = Reply.builder()
                               .reply_id(replyDto.getReply_id())
+                              .board_id(replyDto.getBoard_id())
+                              .user_id(replyDto.getUser_id())
+                              .parent_id(replyDto.getParent_id())
                               .content(replyDto.getContent())
-                              .reply_depth(reply_depth++)
+                              .reply_depth(replyDto.getReply_depth())
                               .update_time(LocalDateTime.now())
                               .build();
         repoSave(insReply);
@@ -84,7 +120,7 @@ public class ReplyServiceImpl implements ReplyService{
     @Transactional(propagation = Propagation.REQUIRED)
     public void delete(DeleteDto deleteDto, Acknowledgment ack)
     {
-        // replyRepository.deleteByBoardId(board_id);
+        repoDel(deleteDto);
         ack.acknowledge();
     }
 
@@ -97,7 +133,7 @@ public class ReplyServiceImpl implements ReplyService{
     @Transactional(propagation = Propagation.REQUIRED)
     public void detailDelete(DetailDeleteDto detailDeleteDto, Acknowledgment ack)
     {
-        // replyRepository.deleteDetail(reply_id_list);
+        repoDetailDel(detailDeleteDto);
         ack.acknowledge();
     }
 
@@ -109,9 +145,24 @@ public class ReplyServiceImpl implements ReplyService{
     }
 
     // Private Method
+    private void callKafka(String topic, Object dto)
+    {
+        kafka.sendMessage(topic, dto);
+        return;
+    }
     @Transactional(propagation = Propagation.REQUIRED)
     private void repoSave(Reply reply)
     {
         replyRepository.save(reply);
+    }
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void repoDel(DeleteDto deleteDto)
+    {
+        replyRepository.deleteByReplyIdBoardId(deleteDto.getKey(), deleteDto.getForeign_key());
+    }
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void repoDetailDel(DetailDeleteDto detailDeleteDto)
+    {
+        replyRepository.detailDelete(detailDeleteDto.getForeign_key(), detailDeleteDto.getKey_list());
     }
 }

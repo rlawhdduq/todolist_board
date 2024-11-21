@@ -2,6 +2,8 @@ package todolist.board.domain;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "board")
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicUpdate
 public class Board {
 
     @Id
