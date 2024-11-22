@@ -37,9 +37,9 @@ public class ReplyServiceTest {
     {
         ReplyDto dto = new ReplyDto();
         Short depth = 1;
-        dto.setBoard_id(45L);
-        dto.setUser_id(127L);
-        dto.setContent("댓글 테슽흐333");
+        dto.setBoard_id(47L);
+        dto.setUser_id(7L);
+        dto.setContent("파워파워파워쌸라쌸라우러");
         dto.setParent_id(5L);
         dto.setReply_depth(depth);
         request = objectMapper.writeValueAsString(dto);

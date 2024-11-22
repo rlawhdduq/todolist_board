@@ -61,12 +61,12 @@ public class TodolistServiceTest {
     throws Exception
     {
         TodolistDto dto = new TodolistDto();
-        Long board_id = 46L;
-        Long todolist_id = 13L;
-        String todo_type = "운동";
-        String todo_type_detail = "벤치프레스40kg/3세트";
-        String todo_unit = "개";
-        Short todo_number = 10;
+        Long board_id = 47L;
+        Long todolist_id = 24L;
+        String todo_type = "헬스";
+        String todo_type_detail = "스쿼트/70kg/2세트";
+        String todo_unit = "회";
+        Short todo_number = 8;
         dto.setTodolist_id(todolist_id);
         dto.setBoard_id(board_id);
         dto.setTodo_type(todo_type);
