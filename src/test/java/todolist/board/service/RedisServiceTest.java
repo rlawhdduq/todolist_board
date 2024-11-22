@@ -3,7 +3,10 @@ package todolist.board.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -36,13 +39,13 @@ public class RedisServiceTest {
     public void getRedisTest()
     {
         log.info("테스트시작");
-        RedisUserListDto userList = new RedisUserListDto();
-        userList.setUserList((List<Long>) redisService.getRedis(user_id));
-        userList.setUser_id(Long.parseLong(user_id));
-        for(Long users : userList.getUserList())
-        {
-            log.info("볼까? " + users);
-        }
+        Map<String, Object> userList = (Map<String, Object>) redisService.getRedis("100");
+        List<Long> getKeyA = (List<Long>) Optional.ofNullable(userList.get("A")).orElse(new ArrayList<>());
+        List<Long> getKeyF = (List<Long>) Optional.ofNullable(userList.get("F")).orElse(new ArrayList<>());
+        List<Long> getKeyC = (List<Long>) Optional.ofNullable(userList.get("C")).orElse(new ArrayList<>());
+        log.info("Get Key A => " +getKeyA.toString());
+        log.info("Get Key F => " +getKeyF.toString());
+        log.info("Get Key C => " +getKeyC.toString());
         log.info("테스트종료");
     }
 }

@@ -1,10 +1,12 @@
 package todolist.board.service.impl.board;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +23,12 @@ import org.springframework.transaction.annotation.Propagation;
 import todolist.board.domain.Board;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.delete.DeleteDto;
+import todolist.board.dto.board.BoardDetailDto;
 import todolist.board.dto.board.BoardDto;
+import todolist.board.dto.board.BoardGetDto;
+import todolist.board.dto.board.BoardListDto;
 import todolist.board.dto.redis.RedisUserListDto;
+import todolist.board.dto.reply.ReplyDto;
 import todolist.board.dto.todolist.TodolistDto;
 import todolist.board.repository.BoardRepository;
 import todolist.board.service.BoardService;
@@ -172,18 +178,34 @@ public class BoardServiceImpl implements BoardService{
      * Q. 위에서 A가 없는이유? 전체공개라서, CC의 경우 A를 볼 수 없기떄문에 친구목록 조회 시 거를 것임
      */
     @Override
-    public List<BoardDto> selectBoardAll(Long user_id)
+    public List<BoardListDto> getBoard(BoardGetDto boardGetDto)
     {
+        Long user_id = boardGetDto.getUser_id();
         isThereCache(user_id);
-        List<BoardDto> boardList = new ArrayList<>();
-        return boardList;
+        
+        Map<String, Object> userIdList = (Map<String, Object>) Optional.ofNullable(redisService.getRedis(user_id.toString())).orElse(new HashMap());
+        List<Long> aUserList = (List<Long>) Optional.ofNullable(userIdList.get("A")).orElse(new ArrayList<>());
+        List<Long> fUserList = (List<Long>) Optional.ofNullable(userIdList.get("F")).orElse(new ArrayList<>());
+        List<Long> cUserList = (List<Long>) Optional.ofNullable(userIdList.get("C")).orElse(new ArrayList<>());
+        List<BoardListDto> boardDto = boardRepository.getBoardList(aUserList, fUserList, cUserList, 1, 1);
+
+        return boardDto;
     }
 
     @Override
-    public BoardDto detailBoard(Long user_id)
+    public BoardDetailDto getDetailBoard(Long board_id, Long user_id)
     {
-        BoardDto boardDto = new BoardDto();
-        return boardDto;
+        isThereCache(user_id);
+        List<Long> user_id_list = (List<Long>) redisService.getRedis(user_id.toString());
+
+        BoardDetailDto boardList    = boardRepository.getDetailBoard(board_id, user_id_list);
+        List<TodolistDto> todolist  = boardRepository.getTodolist(board_id);
+        List<ReplyDto> reply        = boardRepository.getReply(board_id);
+
+        boardList.setTodolist(todolist);
+        boardList.setReply(reply);
+
+        return boardList;
     }
 
     // Private Method
@@ -248,11 +270,11 @@ public class BoardServiceImpl implements BoardService{
          * 캐시 조회 후 저장 
          * Restful
          */
-        RedisUserListDto userList = webClient.get()
+        Map<String, Object> userList = webClient.get()
                                         .uri(followUrl+"/{user_id}", user_id)
                                         .retrieve()
-                                        .bodyToMono(new ParameterizedTypeReference<RedisUserListDto>() {}).block();
-        redisService.setRedis(userList.getUser_id().toString(), (List<Long>) userList.getUserList());
+                                        .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {}).block();
+        redisService.setRedis(user_id.toString(), userList.get("Body"));
     }
 
 }

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import todolist.board.dto.board.BoardDetailDto;
 import todolist.board.dto.board.BoardDto;
 import todolist.board.dto.board.BoardListDto;
+import todolist.board.dto.board.BoardGetDto;
 import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.service.BoardService;
@@ -13,6 +14,9 @@ import todolist.board.service.BoardService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,8 +40,10 @@ public class BoardApi {
      * 지금 드는 생각은 쿼리가 좀 복잡하게 짜여질 것 같은데 어떻게 해보면 되겠지 머...
      */
     @GetMapping("/api/board")
-    public BoardListDto getBoard(@RequestBody Long user_id) {
-        return new BoardListDto();
+    public List<BoardListDto> getBoard(@RequestBody BoardGetDto boardGetDto) {
+
+        List<BoardListDto> boardList = boardService.getBoard(boardGetDto);
+        return boardList;
     }
     
     /*

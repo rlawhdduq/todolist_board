@@ -1,7 +1,9 @@
 package todolist.board.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -11,10 +13,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import todolist.board.dto.board.BoardDto;
+import todolist.board.dto.board.BoardGetDto;
+import todolist.board.dto.board.BoardListDto;
 import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.todolist.TodolistDto;
@@ -22,6 +27,7 @@ import todolist.board.dto.todolist.TodolistDto;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class BoardServiceTest {
@@ -36,25 +42,35 @@ public class BoardServiceTest {
     private ObjectMapper objectMapper;
 
     private Long user_id_long = 100L;
-    private String user_id = "user_id:5162553";
     private static final Logger log = LoggerFactory.getLogger(BoardServiceTest.class);
 
-    // @Test
-    public void selectBoardAllTest()
+    @Test
+    public void getBoardTest()
+    throws Exception
     {
         log.info("테스트 코드 시작");
-        try{
+        BoardGetDto boardGetDto = new BoardGetDto();
+        boardGetDto.setUser_id(user_id_long);
+        boardGetDto.setLimit(10);
+        boardGetDto.setOffset(10);
 
-            List<BoardDto> boardList = boardService.selectBoardAll(user_id_long);
-        }
-        catch(Exception e)
-        {
-            for(StackTraceElement err: e.getStackTrace())
-            {
-                log.info(err.getClassName());
-            }
-        }
-        
+        String insertBoardRequest = objectMapper.writeValueAsString(boardGetDto);
+
+        ResultActions result = mockMvc.perform(get("/api/board").contentType(MediaType.APPLICATION_JSON).content(insertBoardRequest));
+        String list = result.andReturn().getResponse().getContentAsString();
+        log.info("list => " + list);
+        // try{
+        //     List<BoardListDto> boardList = boardService.getBoard(boardGetDto);
+        // }
+        // catch(Exception e)
+        // {
+        //     for(StackTraceElement err: e.getStackTrace())
+        //     {
+        //         log.info(err.getClassName());
+        //         log.info(err.getMethodName());
+        //         log.info(err.getLineNumber() + "");
+        //     }
+        // }
         log.info("테스트 코드 종료");
     }
 
@@ -97,8 +113,8 @@ public class BoardServiceTest {
     public void deleteBoard()
     throws Exception
     {
-        Long board_id = 46L;
-        Long user_id = 594201L;
+        Long board_id = 47L;
+        Long user_id = 7777L;
         DeleteDto deleteDto = new DeleteDto();
         deleteDto.setKey(board_id);
         deleteDto.setForeign_key(user_id);
@@ -127,6 +143,52 @@ public class BoardServiceTest {
 
     // @Test
     public void totalInsertBoard()
+    throws Exception
+    {
+        String topic = "board-insert";
+        BoardDto boardDto = new BoardDto();
+        Long user_id = 7777L;
+        TodolistDto todolistDto = new TodolistDto();
+        Short todoNumber = 10, todoNumber2 = 1;
+        todolistDto.setTodo_type("헬스");
+        todolistDto.setTodo_type_detail("스쿼트/40kg/1세트");
+        todolistDto.setTodo_unit("회");
+        todolistDto.setTodo_number(todoNumber);
+        List<TodolistDto> todolistsDto = new ArrayList<>();
+        todolistsDto.add(todolistDto);
+
+        TodolistDto todolistDto2 = new TodolistDto();
+        todolistDto2.setTodo_type("헬스");
+        todolistDto2.setTodo_type_detail("스쿼트/50kg/2세트");
+        todolistDto2.setTodo_unit("회");
+        todolistDto2.setTodo_number(todoNumber);
+        todolistsDto.add(todolistDto2);
+
+        TodolistDto todolistDto3 = new TodolistDto();
+        todolistDto3.setTodo_type("헬스");
+        todolistDto3.setTodo_type_detail("스쿼트/60kg/2세트");
+        todolistDto3.setTodo_unit("회");
+        todolistDto3.setTodo_number(todoNumber);
+        todolistsDto.add(todolistDto3);
+
+        TodolistDto todolistDto4 = new TodolistDto();
+        todolistDto4.setTodo_type("헬스");
+        todolistDto4.setTodo_type_detail("스쿼트/70kg/1세트");
+        todolistDto4.setTodo_unit("회");
+        todolistDto4.setTodo_number(todoNumber2);
+        todolistsDto.add(todolistDto4);
+
+        boardDto.setUser_id(user_id);
+        boardDto.setContent("전체 게시글 등록테스트 입니다~ \n 이스케이프 문자는 어떻게 들어갈지 궁금하네요 \r\n 오늘의 스쿼트 기록~");
+        boardDto.setScope_of_disclosure("F");
+        boardDto.setTodolist(todolistsDto);
+
+        String insertBoardRequest = objectMapper.writeValueAsString(boardDto);
+        mockMvc.perform(post("/api/board").contentType(MediaType.APPLICATION_JSON).content(insertBoardRequest));
+    }
+
+    // @Test
+    public void totalInsertBoardTwo()
     {
         String topic = "board-insert";
         BoardDto boardDto = new BoardDto();
@@ -155,10 +217,11 @@ public class BoardServiceTest {
         todolistsDto.add(todolistDto3);
 
         boardDto.setUser_id(user_id);
-        boardDto.setContent("totalInsertBoardTest 1 입니다~ \n 이스케이프 문자는 어떻게 들어갈지 궁금하네요 \r\n 오늘의 데드리프트 기록~");
+        boardDto.setContent("totalInsertBoardTest 2 입니다~ \n 이스케이프 문자는 어떻게 들어갈지 궁금하네요 \r\n 오늘의 데드리프트 기록~");
         boardDto.setScope_of_disclosure("A");
         boardDto.setTodolist(todolistsDto);
 
         kafka.sendMessage(topic, (Object) boardDto);
     }
+
 }
