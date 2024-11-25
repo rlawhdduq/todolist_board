@@ -35,7 +35,7 @@ public class RedisServiceTest {
         redisService.setRedis(user_id, userList);
     }
 
-    // @Test
+    @Test
     public void getRedisTest()
     {
         log.info("테스트시작");
