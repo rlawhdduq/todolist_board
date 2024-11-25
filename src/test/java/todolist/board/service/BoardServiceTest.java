@@ -28,6 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class BoardServiceTest {
@@ -44,7 +45,7 @@ public class BoardServiceTest {
     private Long user_id_long = 100L;
     private static final Logger log = LoggerFactory.getLogger(BoardServiceTest.class);
 
-    @Test
+    // @Test
     public void getBoardTest()
     throws Exception
     {
@@ -56,9 +57,9 @@ public class BoardServiceTest {
 
         String insertBoardRequest = objectMapper.writeValueAsString(boardGetDto);
 
-        ResultActions result = mockMvc.perform(get("/api/board").contentType(MediaType.APPLICATION_JSON).content(insertBoardRequest));
-        String list = result.andReturn().getResponse().getContentAsString();
-        log.info("list => " + list);
+        ResultActions result = mockMvc.perform(get("/api/board").contentType(MediaType.APPLICATION_JSON).content(insertBoardRequest)).andDo(print());
+        // String list = result.andDo(print());
+        // log.info("list => " + list);
         // try{
         //     List<BoardListDto> boardList = boardService.getBoard(boardGetDto);
         // }
@@ -74,6 +75,19 @@ public class BoardServiceTest {
         log.info("테스트 코드 종료");
     }
 
+    // @Test
+    public void detailBoardTest()
+    throws Exception
+    {
+        log.info("detailBoardTest시작");
+        Map<String, Long> dto = new HashMap();
+        dto.put("user_id", 100L);
+        dto.put("board_id", 49L);
+        String insertBoardRequest = objectMapper.writeValueAsString(dto);
+
+        ResultActions result = mockMvc.perform(get("/api/board").contentType(MediaType.APPLICATION_JSON).content(insertBoardRequest)).andDo(print());
+        log.info("detailBoardTest종료");
+    }
     // @Test
     public void insertBoard()
     throws Exception
@@ -141,7 +155,7 @@ public class BoardServiceTest {
         mockMvc.perform(delete("/api/board/detail").contentType(MediaType.APPLICATION_JSON).content(insertBoardRequest));
     }
 
-    // @Test
+    @Test
     public void totalInsertBoard()
     throws Exception
     {
