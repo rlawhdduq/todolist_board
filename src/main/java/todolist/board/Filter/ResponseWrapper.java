@@ -1,4 +1,4 @@
-package todolist.board.Filter;
+package todolist.board.filter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
