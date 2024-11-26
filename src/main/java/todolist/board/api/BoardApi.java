@@ -6,13 +6,13 @@ import lombok.RequiredArgsConstructor;
 import todolist.board.dto.board.BoardDetailDto;
 import todolist.board.dto.board.BoardDto;
 import todolist.board.dto.board.BoardListDto;
-import todolist.board.dto.board.BoardGetDto;
 import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.service.BoardService;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.List;
@@ -39,18 +39,17 @@ public class BoardApi {
      * 로그인 시 세션에 user_id, user_type을 넣어두기 때문에 저거 두개로 조회쿼리를 제어하면 될 것 같다.
      * 지금 드는 생각은 쿼리가 좀 복잡하게 짜여질 것 같은데 어떻게 해보면 되겠지 머...
      */
-    @GetMapping("/api/board")
-    public List<BoardListDto> getBoard(@RequestBody BoardGetDto boardGetDto) {
-
-        List<BoardListDto> boardList = boardService.getBoard(boardGetDto);
+    @GetMapping("/api/board/{user_id}/{limit}/{board_id}")
+    public List<BoardListDto> getBoard(@PathVariable Long user_id, @PathVariable Integer limit, @PathVariable Long board_id) {
+        List<BoardListDto> boardList = boardService.getBoard(user_id, limit, board_id);
         return boardList;
     }
     
     /*
      * 이것도 전체 게시글 조회에서 만들어진 로직에 + board_id만 넣으면 된다.
      */
-    @GetMapping("/api/board/{board_id}")
-    public BoardDetailDto getBoardDetail(@PathVariable Long board_id, @RequestBody Long user_id) {
+    @GetMapping("/api/board/{user_id}/{board_id}")
+    public BoardDetailDto getBoardDetail(@PathVariable Long user_id, @PathVariable Long board_id) {
         BoardDetailDto boardDetailDto = boardService.getDetailBoard(board_id, user_id);
         return boardDetailDto;
     }
