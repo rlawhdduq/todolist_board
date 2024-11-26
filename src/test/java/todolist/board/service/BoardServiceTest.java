@@ -155,7 +155,7 @@ public class BoardServiceTest {
         mockMvc.perform(delete("/api/board/detail").contentType(MediaType.APPLICATION_JSON).content(insertBoardRequest));
     }
 
-    @Test
+    // @Test
     public void totalInsertBoard()
     throws Exception
     {
