@@ -45,8 +45,9 @@ public class ReplyApi {
         return;
     }
     
-    @GetMapping("/api/reply/{board_id}")
-    public List<ReplyDto> getMethodName(@PathVariable("board_id") Long board_id) {
+    // 개발 X 사용여부 불확실
+    @GetMapping("/api/board/reply/{board_id}")
+    public List<ReplyDto> getReply(@PathVariable Long board_id) {
 
         List<ReplyDto> replyList = replyService.select(board_id);
         return replyList;

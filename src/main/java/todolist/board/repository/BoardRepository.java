@@ -29,13 +29,14 @@ public interface BoardRepository extends JpaRepository<Board, Long>{
             "Select new todolist.board.dto.board.BoardListDto(b.board_id, b.user_id, b.scope_of_disclosure, b.create_time, b.fulfillment_time, b.content) "+
             "From Board as b "+
             "Where "+
-            "(scope_of_disclosure = 'A' and user_id in (:aUserList) and status = 'Y') or " +
+            "((scope_of_disclosure = 'A' and user_id in (:aUserList) and status = 'Y') or " +
             "(scope_of_disclosure = 'F' and user_id in (:fUserList) and status = 'Y') or " +
-            "(scope_of_disclosure = 'C' and user_id in (:cUserList) and status = 'Y') " +
+            "(scope_of_disclosure = 'C' and user_id in (:cUserList) and status = 'Y')) and " +
+            "board_id > :board_id" +
             "Order by board_id desc " +
-            "Limit :limit Offset :offset"
+            "Limit :limit "
             )
-    List<BoardListDto> getBoardList(@Param("aUserList") List<Long> aUserList, @Param("fUserList") List<Long> fUserList, @Param("cUserList") List<Long> cUserList, @Param("limit") int limit, @Param("offset") int offset);
+    List<BoardListDto> getBoardList(@Param("aUserList") List<Long> aUserList, @Param("fUserList") List<Long> fUserList, @Param("cUserList") List<Long> cUserList, @Param("board_id") Long board_id, @Param("limit") int limit);
 
     @Query("Select new todolist.board.dto.board.BoardDetailDto(b.board_id, b.user_id, b.scope_of_disclosure, b.fulfillment_or_not, b.create_time, b.fulfillment_time, b.content) From Board as b Where b.board_id = :board_id and status = 'Y' and user_id in (:user_id_list)")
     BoardDetailDto getDetailBoard(@Param("board_id") Long board_id, @Param("user_id_list") List<Long> user_id_list);

@@ -25,7 +25,6 @@ import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.board.BoardDetailDto;
 import todolist.board.dto.board.BoardDto;
-import todolist.board.dto.board.BoardGetDto;
 import todolist.board.dto.board.BoardListDto;
 import todolist.board.dto.redis.RedisUserListDto;
 import todolist.board.dto.reply.ReplyDto;
@@ -178,16 +177,17 @@ public class BoardServiceImpl implements BoardService{
      * Q. 위에서 A가 없는이유? 전체공개라서, CC의 경우 A를 볼 수 없기떄문에 친구목록 조회 시 거를 것임
      */
     @Override
-    public List<BoardListDto> getBoard(BoardGetDto boardGetDto)
+    public List<BoardListDto> getBoard(Long user_id, Integer limit, Long board_id)
     {
-        Long user_id = boardGetDto.getUser_id();
+        if(limit <= 0) limit = 10;
+        if(board_id.toString().isEmpty()) board_id = 0L;
         isThereCache(user_id);
         
         Map<String, Object> userIdList = (Map<String, Object>) Optional.ofNullable(redisService.getRedis(user_id.toString())).orElse(new HashMap());
         List<Long> aUserList = (List<Long>) Optional.ofNullable(userIdList.get("A")).orElse(new ArrayList<>());
         List<Long> fUserList = (List<Long>) Optional.ofNullable(userIdList.get("F")).orElse(new ArrayList<>());
         List<Long> cUserList = (List<Long>) Optional.ofNullable(userIdList.get("C")).orElse(new ArrayList<>());
-        List<BoardListDto> boardDto = boardRepository.getBoardList(aUserList, fUserList, cUserList, 1, 1);
+        List<BoardListDto> boardDto = boardRepository.getBoardList(aUserList, fUserList, cUserList, board_id, limit);
 
         return boardDto;
     }

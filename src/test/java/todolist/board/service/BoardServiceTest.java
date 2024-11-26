@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import todolist.board.dto.board.BoardDto;
-import todolist.board.dto.board.BoardGetDto;
 import todolist.board.dto.board.BoardListDto;
 import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
@@ -50,10 +49,10 @@ public class BoardServiceTest {
     throws Exception
     {
         log.info("테스트 코드 시작");
-        BoardGetDto boardGetDto = new BoardGetDto();
-        boardGetDto.setUser_id(user_id_long);
-        boardGetDto.setLimit(10);
-        boardGetDto.setOffset(10);
+        Map<String, Long> boardGetDto = new HashMap<>();
+        boardGetDto.put("user_id", user_id_long);
+        boardGetDto.put("limit", 10L);
+        boardGetDto.put("offset", 10L);
 
         String insertBoardRequest = objectMapper.writeValueAsString(boardGetDto);
 
