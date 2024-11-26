@@ -51,7 +51,8 @@ public class BoardApi {
      */
     @GetMapping("/api/board/{board_id}")
     public BoardDetailDto getBoardDetail(@PathVariable Long board_id, @RequestBody Long user_id) {
-        return new BoardDetailDto();
+        BoardDetailDto boardDetailDto = boardService.getDetailBoard(board_id, user_id);
+        return boardDetailDto;
     }
     @PostMapping("/api/board")
     public void insertBoard(@RequestBody BoardDto boardDto) {
