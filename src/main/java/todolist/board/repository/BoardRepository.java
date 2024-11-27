@@ -32,7 +32,7 @@ public interface BoardRepository extends JpaRepository<Board, Long>{
             "((scope_of_disclosure = 'A' and user_id in (:aUserList) and status = 'Y') or " +
             "(scope_of_disclosure = 'F' and user_id in (:fUserList) and status = 'Y') or " +
             "(scope_of_disclosure = 'C' and user_id in (:cUserList) and status = 'Y')) and " +
-            "board_id > :board_id" +
+            "board_id > :board_id " +
             "Order by board_id desc " +
             "Limit :limit "
             )

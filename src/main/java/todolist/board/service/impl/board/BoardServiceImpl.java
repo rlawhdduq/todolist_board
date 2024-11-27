@@ -179,8 +179,9 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public List<BoardListDto> getBoard(Long user_id, Integer limit, Long board_id)
     {
-        if(limit <= 0) limit = 10;
-        if(board_id.toString().isEmpty()) board_id = 0L;
+        limit = limit <= 0 ? 0 : limit;
+        board_id = board_id == null ? 0L : board_id;
+        
         isThereCache(user_id);
         
         Map<String, Object> userIdList = (Map<String, Object>) Optional.ofNullable(redisService.getRedis(user_id.toString())).orElse(new HashMap());
@@ -271,7 +272,7 @@ public class BoardServiceImpl implements BoardService{
          * Restful
          */
         Map<String, Object> userList = webClient.get()
-                                        .uri(followUrl+"/{user_id}", user_id)
+                                        .uri(followUrl+"?user_id={user_id}", user_id)
                                         .retrieve()
                                         .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {}).block();
         redisService.setRedis(user_id.toString(), userList.get("Body"));
