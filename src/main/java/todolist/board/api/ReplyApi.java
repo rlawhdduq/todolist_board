@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
@@ -46,8 +47,8 @@ public class ReplyApi {
     }
     
     // 개발 X 사용여부 불확실
-    @GetMapping("/api/board/reply/{board_id}")
-    public List<ReplyDto> getReply(@PathVariable Long board_id) {
+    @GetMapping("/api/board/reply")
+    public List<ReplyDto> getReply(@RequestParam Long board_id) {
 
         List<ReplyDto> replyList = replyService.select(board_id);
         return replyList;
