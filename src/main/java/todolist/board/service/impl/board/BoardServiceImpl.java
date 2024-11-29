@@ -180,7 +180,7 @@ public class BoardServiceImpl implements BoardService{
     public List<BoardListDto> getBoard(Long user_id, Integer limit, Long board_id)
     {
         limit = limit <= 0 ? 0 : limit;
-        board_id = board_id == null ? 0L : board_id;
+        board_id = board_id == null ? Long.MAX_VALUE : board_id;
         
         isThereCache(user_id);
         
