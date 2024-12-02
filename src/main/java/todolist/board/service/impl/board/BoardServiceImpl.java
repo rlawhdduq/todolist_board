@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import todolist.board.domain.Board;
 import todolist.board.dto.delete.DetailDeleteDto;
@@ -53,9 +54,10 @@ public class BoardServiceImpl implements BoardService{
 
     @Autowired
     private WebClient webClient;
-
     @Autowired
     private KafkaProducer kafka;
+    @Autowired
+    private SimpMessagingTemplate messageTemplate;
 
     @Value("${service.url}")
     private String followUrl;
@@ -97,8 +99,7 @@ public class BoardServiceImpl implements BoardService{
                               .content(boardDto.getContent())
                               .build();
         repoINS(insBoard, boardDto);
-
-        
+        redisService.newBoardMessage(boardDto.getScope_of_disclosure(), boardDto.getUser_id(), (Object) boardDto);
         ack.acknowledge();
     }
 
@@ -185,10 +186,11 @@ public class BoardServiceImpl implements BoardService{
         isThereCache(user_id);
         
         Map<String, Object> userIdList = (Map<String, Object>) Optional.ofNullable(redisService.getRedis(user_id.toString())).orElse(new HashMap());
-        List<Long> aUserList = (List<Long>) Optional.ofNullable(userIdList.get("A")).orElse(new ArrayList<>());
+        // List<Long> aUserList = (List<Long>) Optional.ofNullable(userIdList.get("A")).orElse(new ArrayList<>());
         List<Long> fUserList = (List<Long>) Optional.ofNullable(userIdList.get("F")).orElse(new ArrayList<>());
         List<Long> cUserList = (List<Long>) Optional.ofNullable(userIdList.get("C")).orElse(new ArrayList<>());
-        List<BoardListDto> boardDto = boardRepository.getBoardList(aUserList, fUserList, cUserList, board_id, limit);
+        // List<BoardListDto> boardDto = boardRepository.getBoardList(aUserList, fUserList, cUserList, board_id, limit);
+        List<BoardListDto> boardDto = boardRepository.getBoardList(fUserList, cUserList, board_id, limit);
 
         return boardDto;
     }
