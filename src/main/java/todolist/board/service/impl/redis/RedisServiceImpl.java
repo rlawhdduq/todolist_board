@@ -51,7 +51,8 @@ public class RedisServiceImpl implements RedisService{
         {
             topic += key;
         }
-        log.info("redis topic = " + topic);
+
         redisTemplate.convertAndSend("board/"+topic, msg);
+        log.info("new Board");
     }
 }

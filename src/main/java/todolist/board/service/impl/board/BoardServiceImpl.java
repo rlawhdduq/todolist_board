@@ -98,8 +98,8 @@ public class BoardServiceImpl implements BoardService{
                               .scope_of_disclosure(boardDto.getScope_of_disclosure())
                               .content(boardDto.getContent())
                               .build();
-        repoINS(insBoard, boardDto);
-        redisService.newBoardMessage(boardDto.getScope_of_disclosure(), boardDto.getUser_id(), (Object) boardDto);
+        Board returnBoard = repoINS(insBoard, boardDto);
+        redisService.newBoardMessage(boardDto.getScope_of_disclosure(), boardDto.getUser_id(), (Object) returnBoard);
         ack.acknowledge();
     }
 
@@ -218,9 +218,9 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    private void repoINS(Board board, BoardDto boardDto)
+    private Board repoINS(Board board, BoardDto boardDto)
     {
-        boardRepository.save(board);
+        Board returnBoard = boardRepository.save(board);
         if( !Optional.ofNullable(boardDto.getTodolist()).orElse(Collections.emptyList()).isEmpty() )
         {
             for(TodolistDto todolist : boardDto.getTodolist())
@@ -229,6 +229,7 @@ public class BoardServiceImpl implements BoardService{
                 todolistService.insertFromBoard(todolist);
             }
         }
+        return returnBoard;
     }
     @Transactional(propagation = Propagation.REQUIRED)
     private void repoUPD(Board board, BoardDto boardDto)
