@@ -22,4 +22,17 @@ public class BoardDto {
     private Character status;
     private LocalDateTime update_time;
     private List<TodolistDto> todolist;
+
+    public BoardDto(Long board_id, Long user_id, String scope_of_disclosure, Character fulfillment_of_not, 
+        LocalDateTime create_time, LocalDateTime fulfillment_time, String content, LocalDateTime update_time)
+    {
+        this.board_id = board_id;
+        this.user_id = user_id;
+        this.scope_of_disclosure = scope_of_disclosure;
+        this.fulfillment_or_not = fulfillment_of_not;
+        this.create_time = create_time;
+        this.fulfillment_time = fulfillment_time;
+        this.content = content;
+        this.update_time = update_time;
+    }
 }
