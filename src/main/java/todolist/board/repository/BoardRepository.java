@@ -40,7 +40,7 @@ public interface BoardRepository extends JpaRepository<Board, Long>{
     List<BoardListDto> getBoardList(@Param("fUserList") List<Long> fUserList, @Param("cUserList") List<Long> cUserList, @Param("board_id") Long board_id, @Param("limit") int limit);
     // List<BoardListDto> getBoardList(@Param("aUserList") List<Long> aUserList, @Param("fUserList") List<Long> fUserList, @Param("cUserList") List<Long> cUserList, @Param("board_id") Long board_id, @Param("limit") int limit);
 
-    @Query("Select new todolist.board.dto.board.BoardDetailDto(b.board_id, b.user_id, b.scope_of_disclosure, b.fulfillment_or_not, b.create_time, b.fulfillment_time, b.content) From Board as b Where b.board_id = :board_id and status = 'Y' and user_id in (:user_id_list)")
+    @Query("Select new todolist.board.dto.board.BoardDetailDto(b.board_id, b.user_id, b.scope_of_disclosure, b.fulfillment_or_not, b.create_time, b.fulfillment_time, b.content) From Board as b Where b.board_id = :board_id and status = 'Y' and ( (b.scope_of_disclosure = 'F' and user_id in (:user_id_list)) or (b.scope_of_disclosure = 'A') )")
     BoardDetailDto getDetailBoard(@Param("board_id") Long board_id, @Param("user_id_list") List<Long> user_id_list);
     @Query("Select new todolist.board.dto.todolist.TodolistDto(t.todolist_id, t.board_id, t.create_time, t.todo_type, t.todo_type_detail, t.todo_unit, t.todo_number, t.fulfillment_or_not) From Todolist as t Where t.board_id = :board_id and status = 'Y'")
     List<TodolistDto> getTodolist(@Param("board_id") Long board_id);

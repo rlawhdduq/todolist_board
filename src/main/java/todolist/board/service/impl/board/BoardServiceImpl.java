@@ -199,9 +199,9 @@ public class BoardServiceImpl implements BoardService{
     public BoardDetailDto getDetailBoard(Long board_id, Long user_id)
     {
         isThereCache(user_id);
-        List<Long> user_id_list = (List<Long>) redisService.getRedis(user_id.toString());
-
-        BoardDetailDto boardList    = boardRepository.getDetailBoard(board_id, user_id_list);
+        // List<Long> user_id_list = (List<Long>) redisService.getRedis(user_id.toString());
+        Map<String, Object> user_id_list = (Map<String, Object>) redisService.getRedis(user_id.toString());
+        BoardDetailDto boardList    = boardRepository.getDetailBoard(board_id, (List<Long>) user_id_list.get("F"));
         List<TodolistDto> todolist  = boardRepository.getTodolist(board_id);
         List<ReplyDto> reply        = boardRepository.getReply(board_id);
 
@@ -278,7 +278,7 @@ public class BoardServiceImpl implements BoardService{
                                         .uri(followUrl+"?user_id={user_id}", user_id)
                                         .retrieve()
                                         .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {}).block();
-        redisService.setRedis(user_id.toString(), userList.get("Body"));
+        redisService.setRedis(user_id.toString(), userList);
     }
 
 }

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
@@ -22,6 +24,7 @@ import todolist.board.service.TodolistService;
 @Service
 public class TodolistServiceImpl implements TodolistService{
     
+    private static final Logger log = LoggerFactory.getLogger(TodolistServiceImpl.class);
     @Autowired
     private TodolistRepository todolistRepository;
     @Autowired
@@ -70,6 +73,7 @@ public class TodolistServiceImpl implements TodolistService{
     {
         Todolist updTodolist = Todolist.builder()
                                        .todolist_id(todolistDto.getTodolist_id())
+                                       .board_id(todolistDto.getBoard_id())
                                        .todo_type(todolistDto.getTodo_type())
                                        .todo_type_detail(todolistDto.getTodo_type_detail())
                                        .todo_number(todolistDto.getTodo_number())
