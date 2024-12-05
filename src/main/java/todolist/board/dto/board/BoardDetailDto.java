@@ -1,6 +1,7 @@
 package todolist.board.dto.board;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -34,5 +35,28 @@ public class BoardDetailDto {
         this.create_time = create_time;
         this.fulfillment_time = fulfillment_time;
         this.content = content;
+    }
+
+    public void setTodolist(List<TodolistDto> todolist)
+    {
+        if( todolist == null )
+        {
+            this.todolist = new ArrayList<>();
+        }
+        else
+        {
+            this.todolist = todolist;
+        }
+    }
+    public void setReply(List<ReplyDto> reply)
+    {
+        if( reply == null )
+        {
+            this.reply = new ArrayList<>();
+        }
+        else
+        {
+            this.reply = reply;
+        }
     }
 }
