@@ -19,14 +19,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           
-      # - name: Add Permissions for gralde wrapper
-      #   run: chmod +x ./gradlew
+      - name: Add Permissions for gralde wrapper
+        run: chmod +x ./gradlew
         
-      # - name: Build with Gradle
-      #   run: |
-      #       ./gradlew clean build -x test # 빌드 과정에서 테스트 생략 -> 후일 테스트까지 하게 바꿔봐야겠다.
-      #       ls -al
-      #       pwd
+      - name: Build with Gradle
+        run: |
+            ./gradlew clean build -x test # 빌드 과정에서 테스트 생략 -> 후일 테스트까지 하게 바꿔봐야겠다.
             
       - name: Set SSH ssh-action
         uses: appleboy/ssh-action@master
@@ -36,9 +34,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 2222
           script: |
-                  chmod +x ./gradlew
-                  ./gradlew clean build -x test # 빌드 과정에서 테스트 생략 -> 후일 테스트까지 하게 바꿔봐야겠다.
-                  ls -al
                   # 파일 전송
                   echo " ====== "
                   echo "start"
@@ -47,7 +42,7 @@ jobs:
                   ls -l private_key.pem
                   echo "private_key"
                   cat private_key.pem
-                  scp -o StrictHostKeyChecking=no -i private_key.pem -P 2222 /home/runner/work/todolist_board/todolist_board/build/libs/*.jar ubuntukjy@${{ secrets.HOST_IP }}:/spring/docker/compose/board/jar
+                  scp -o StrictHostKeyChecking=no -i private_key.pem -P 2222 $GITHUB_WORKSPACE/build/libs/*.jar ubuntukjy@${{ secrets.HOST_IP }}:/spring/docker/compose/board/jar
                   echo "end"
       
       # - name: Create SSH Key
