@@ -39,6 +39,16 @@ jobs:
                   # 파일 전송
                   pwd
                   ls -al
+                  echo " ====== "
+                  cd /home/runner/work/todolist_board/todolist_board
+                  ls -al
+                  echo " ====== "
+                  cd /home/runner/work/todolist_board/todolist_board/build
+                  ls -al
+                  echo " ====== "
+                  cd /home/runner/work/todolist_board/todolist_board/build/libs
+                  ls -al
+                  echo " ====== "
                   echo "start"
                   echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r\' > private_key.pem
                   chmod 600 private_key.pem
