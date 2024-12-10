@@ -37,7 +37,8 @@ jobs:
           port: 2222
           script: |
                   # 파일 전송
-                  whoami
+                  cd $GITHUB_WORKSPACE
+                  pwd
                   ls -al
                   echo "start"
                   echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r\' > private_key.pem
