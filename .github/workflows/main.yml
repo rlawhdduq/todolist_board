@@ -37,7 +37,6 @@ jobs:
           port: 2222
           script: |
                   # 파일 전송
-                  cd $GITHUB_WORKSPACE
                   pwd
                   ls -al
                   echo "start"
@@ -46,7 +45,7 @@ jobs:
                   ls -l private_key.pem
                   echo "private_key"
                   cat private_key.pem
-                  scp -o StrictHostKeyChecking=no -i private_key.pem -P 2222 build/libs/*.jar ubuntukjy@${{ secrets.HOST_IP }}:/spring/docker/compose/board/jar
+                  scp -o StrictHostKeyChecking=no -i private_key.pem -P 2222 /home/runner/work/todolist_board/todolist_board/build/libs/*.jar ubuntukjy@${{ secrets.HOST_IP }}:/spring/docker/compose/board/jar
                   echo "end"
       
       # - name: Create SSH Key
