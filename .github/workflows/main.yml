@@ -28,6 +28,12 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add Known Hosts
+        run: |
+            mkdir -p ~/.ssh
+            ssh-keyscan -H localhost >> ~/.ssh/known_hosts
+          
       - name: Add Permissions for .jar file
         run: chmod +x ./build/libs/*.jar
         
