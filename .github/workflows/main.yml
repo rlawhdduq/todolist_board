@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'adoptopenjdk'
+          distribution: 'adoptium'
 
       - name: Build with Gradle
         run: ./gradlew clean build -x test # 빌드 과정에서 테스트 생략 -> 후일 테스트까지 하게 바꿔봐야겠다.
