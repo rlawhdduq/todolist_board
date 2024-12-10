@@ -35,8 +35,14 @@ jobs:
           script: |
                   # 파일 전송
                   whoami
+                  ls -al
                   echo "start"
-                  scp -i ${{ secrets.SSH_PRIVATE_KEY }} -P 2222 build/libs/*.jar ubuntukjy@${{ secrets.HOST_IP }}:/spring/docker/compose/board/jar
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r\ > private_key.pem
+                  chmod 600 private_key.pem
+                  ls -l private_key.pem
+                  echo "private_key"
+                  cat private_key.pem
+                  scp -i private_key.pem -P 2222 build/libs/*.jar ubuntukjy@${{ secrets.HOST_IP }}:/spring/docker/compose/board/jar
                   echo "end"
       
       # - name: Create SSH Key
