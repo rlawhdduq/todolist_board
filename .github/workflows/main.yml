@@ -24,22 +24,34 @@ jobs:
         
       # - name: Build with Gradle
       #   run: ./gradlew clean build -x test # 빌드 과정에서 테스트 생략 -> 후일 테스트까지 하게 바꿔봐야겠다.
-      - name: Create SSH Key
-        run: |
-            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/private_key.pem
-            chmod 600 ~/private_key.pem
-      - name: Create SSH Dir
-        run: |
-            mkdir -p ~/.ssh
-            
-      - name: Add knwon_hosts
-        run: |
-            ssh-keyscan localhost >> ~/.ssh/known_hosts
 
-      - name: Copy jar file to Local Docker Container via SSH
-        run: |
-          # SSH를 사용해서 로컬 WSL에 파일 복사하기
-          scp -i ~/private_key.pem -v build/libs/*.jar root@localhost:/spring/docker/compose/board/jar
+      - name: Set SSH ssh-action
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: localhost
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+                  whoami
+                  ls -al
+      
+      # - name: Create SSH Key
+      #   run: |
+      #       echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/private_key.pem
+      #       chmod 600 ~/private_key.pem
+      # - name: Create SSH Dir
+      #   run: |
+      #       mkdir -p ~/.ssh
+            
+      # - name: Add knwon_hosts
+      #   run: |
+      #       ssh-keyscan localhost >> ~/.ssh/known_hosts
+
+      # - name: Copy jar file to Local Docker Container via SSH
+      #   run: |
+      #     # SSH를 사용해서 로컬 WSL에 파일 복사하기
+      #     scp -i ~/private_key.pem -v build/libs/*.jar root@localhost:/spring/docker/compose/board/jar
           
       # - name: Set up SSH
       #   uses: webfactory/ssh-agent@v0.5.3
