@@ -30,16 +30,23 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Save SSH private key to file
+        run: |
+            echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key.pem
+            chmod 600 private_key.pem
+            
+      - name: Convert PEM to OpenSSH format
+        run: |
+            ssh-keygen -p -f private_key.pem -m PEM -N "" -t rsa -C "converted_key"
+
       - name: Add SSH Host to hosts
         run: |
             ssh-keyscan -H localhost >> ~/.ssh/known_hosts
+            
       - name: Add SSH Key to Agent
         run: |
-            echo "$SSH_PRIVATE_KEY" > private_key.rsa
-            chmod 600 private_key.rsa
             eval $(ssh-agent -s)
-            ssh-add private_key.rsa
-            ssh-add -L # key 목록 출력
+            ssh-add private_key.pem
             
       - name: Verify known_hosts
         run: |
