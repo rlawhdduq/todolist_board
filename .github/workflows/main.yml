@@ -30,23 +30,19 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           
-      - name: SSH key List load
-        run: |
-            ssh-add -l
-      - name: Set up SSH Key
-        run: |
-            mkdir -p ~/.ssh
-            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-            
-      # - name: Add Known Hosts
+      # - name: Set up SSH Key
       #   run: |
       #       mkdir -p ~/.ssh
-      #       ssh-keyscan -H localhost >> ~/.ssh/known_hosts
+      #       echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+      #       chmod 600 ~/.ssh/id_rsa
+            
+      - name: Add Known Hosts
+        run: |
+            ssh-keyscan -H 172.17.42.90 >> ~/.ssh/known_hosts
 
       - name: Test SSH Connect
         run: |
-            ssh -vvv -o PasswordAuthentication=no -o StrictHostKeyChecking=no root@localhost echo "SSH connection test successful"
+            ssh -vvv -o PasswordAuthentication=no -o StrictHostKeyChecking=no root@172.17.42.90 echo "SSH connection test successful"
           
       # - name: Add Permissions for .jar file
       #   run: chmod +x ./build/libs/*.jar
