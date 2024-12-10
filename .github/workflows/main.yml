@@ -43,8 +43,8 @@ jobs:
 
       - name: Start SSH agent and add key
         run: |
-            eval $(ssh-agent -s)  # SSH 에이전트 시작
             ssh-add private_key.pem  # SSH 키 추가
+            eval $(ssh-agent -s)  # SSH 에이전트 시작
             ssh-add -L  # 에이전트에 추가된 키 목록 확인
 
       - name: Verify known_hosts
