@@ -37,7 +37,7 @@ jobs:
                   whoami
                   ls -al
                   echo "start"
-                  echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r\ > private_key.pem
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r\' > private_key.pem
                   chmod 600 private_key.pem
                   ls -l private_key.pem
                   echo "private_key"
