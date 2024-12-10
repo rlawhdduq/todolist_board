@@ -35,6 +35,12 @@ jobs:
       - name: Add knwon_hosts
         run: |
             ssh-keyscan localhost >> ~/.ssh/known_hosts
+
+      - name: Copy jar file to Local Docker Container via SSH
+        run: |
+          # SSH를 사용해서 로컬 WSL에 파일 복사하기
+          scp -i ~/private_key.pem -v build/libs/*.jar root@localhost:/home/root/spring/docker/compose/board/jar/
+          
       # - name: Set up SSH
       #   uses: webfactory/ssh-agent@v0.5.3
       #   with:
