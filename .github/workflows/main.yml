@@ -24,36 +24,46 @@ jobs:
         
       # - name: Build with Gradle
       #   run: ./gradlew clean build -x test # 빌드 과정에서 테스트 생략 -> 후일 테스트까지 하게 바꿔봐야겠다.
-
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Save SSH private key to file
+      - name: Create SSH Key
         run: |
-            echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > private_key.pem  # SSH_PRIVATE_KEY를 파일로 저장
-            chmod 600 private_key.pem  # 파일 권한 설정
-            ls -l private_key.pem  # 파일 권한 확인
-            cat private_key.pem  # 파일 내용 확인 (PEM 형식 확인)
-
-      - name: Add SSH Host to hosts
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/private_key.pem
+            chmod 600 ~/private_key.pem
+      - name: Create SSH Dir
         run: |
-            ssh-keyscan -H localhost >> ~/.ssh/known_hosts  # 호스트 키를 known_hosts에 추가
-
-      - name: Start SSH agent and add key
+            mkdir -p ~/.ssh
+            
+      - name: Add knwon_hosts
         run: |
-            # ssh-add private_key.pem  # SSH 키 추가
-            ssh-add -L  # 에이전트에 추가된 키 목록 확인
-            eval $(ssh-agent -s)  # SSH 에이전트 시작
+            ssh-keyscan localhost >> ~/.ssh/known_hosts
+      # - name: Set up SSH
+      #   uses: webfactory/ssh-agent@v0.5.3
+      #   with:
+      #     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Verify known_hosts
-        run: |
-            cat ~/.ssh/known_hosts  # known_hosts 내용 확인
+      # - name: Save SSH private key to file
+      #   run: |
+      #       echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > private_key.pem  # SSH_PRIVATE_KEY를 파일로 저장
+      #       chmod 600 private_key.pem  # 파일 권한 설정
+      #       ls -l private_key.pem  # 파일 권한 확인
+      #       cat private_key.pem  # 파일 내용 확인 (PEM 형식 확인)
 
-      - name: Test SSH Connect
-        run: |
-            ssh -vvv -o PasswordAuthentication=no root@localhost 'echo "SSH connection test successful"'  # SSH 연결 테스트
+      # - name: Add SSH Host to hosts
+      #   run: |
+      #       ssh-keyscan -H localhost >> ~/.ssh/known_hosts  # 호스트 키를 known_hosts에 추가
+
+      # - name: Start SSH agent and add key
+      #   run: |
+      #       # ssh-add private_key.pem  # SSH 키 추가
+      #       ssh-add -L  # 에이전트에 추가된 키 목록 확인
+      #       eval $(ssh-agent -s)  # SSH 에이전트 시작
+
+      # - name: Verify known_hosts
+      #   run: |
+      #       cat ~/.ssh/known_hosts  # known_hosts 내용 확인
+
+      # - name: Test SSH Connect
+      #   run: |
+      #       ssh -vvv -o PasswordAuthentication=no root@localhost 'echo "SSH connection test successful"'  # SSH 연결 테스트
 
           
       # - name: Add Permissions for .jar file
