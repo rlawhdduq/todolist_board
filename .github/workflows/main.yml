@@ -32,29 +32,29 @@ jobs:
 
       - name: Save SSH private key to file
         run: |
-            echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key.pem
-            chmod 600 private_key.pem
-            echo "private_key exists?"
-            ls -l private_key.pem
-            echo "private_key check!"
-            cat private_key.pem
+            echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key.pem  # SSH_PRIVATE_KEY를 파일로 저장
+            chmod 600 private_key.pem  # 파일 권한 설정
+            ls -l private_key.pem  # 파일 권한 확인
+            cat private_key.pem  # 파일 내용 확인 (PEM 형식 확인)
 
       - name: Add SSH Host to hosts
         run: |
-            ssh-keyscan -H localhost >> ~/.ssh/known_hosts
-            
-      - name: Add SSH Key to Agent
+            ssh-keyscan -H localhost >> ~/.ssh/known_hosts  # 호스트 키를 known_hosts에 추가
+
+      - name: Start SSH agent and add key
         run: |
-            eval $(ssh-agent -s)
-            ssh-add private_key.pem
-            
+            eval $(ssh-agent -s)  # SSH 에이전트 시작
+            ssh-add private_key.pem  # SSH 키 추가
+            ssh-add -L  # 에이전트에 추가된 키 목록 확인
+
       - name: Verify known_hosts
         run: |
-            cat ~/.ssh/knwon_hosts
-            
+            cat ~/.ssh/known_hosts  # known_hosts 내용 확인
+
       - name: Test SSH Connect
         run: |
-            ssh -vvv -o PasswordAuthentication=no root@localhost 'echo "SSH connection test successful"'
+            ssh -vvv -o PasswordAuthentication=no root@localhost 'echo "SSH connection test successful"'  # SSH 연결 테스트
+
           
       # - name: Add Permissions for .jar file
       #   run: chmod +x ./build/libs/*.jar
