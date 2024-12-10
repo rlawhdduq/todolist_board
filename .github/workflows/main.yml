@@ -34,6 +34,6 @@ jobs:
       - name: Copy jar file to Local Docker Container via SSH
         run:
           # SSH를 사용해서 로컬 WSL에 파일 복사하기
-          scp build/libs/*.jar root@172.17.42.90:/home/root/spring/docker/compose/board/jar/
+          scp -v build/libs/*.jar root@172.17.42.90:/home/root/spring/docker/compose/board/jar/
         
         
