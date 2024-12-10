@@ -30,6 +30,8 @@ jobs:
         run: |
             pwd
             ls -al
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > private_key.pem
+            chmod 600 private_key.pem
             scp -o StrictHostKeyChecking=no -i private_key.pem -P 2222 $GITHUB_WORKSPACE/build/libs/*.jar ubuntukjy@${{ secrets.HOST_IP }}:/spring/docker/compose/board/jar
       # - name: Set SSH ssh-action
       #   uses: appleboy/ssh-action@master
