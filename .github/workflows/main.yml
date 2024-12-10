@@ -28,8 +28,8 @@ jobs:
       - name: Set SSH ssh-action
         uses: appleboy/ssh-action@master
         with:
-          host: 172.17.42.90
-          username: root
+          host: 192.168.117.129
+          username: ubuntukjy
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
