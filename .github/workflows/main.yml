@@ -33,6 +33,7 @@ jobs:
             echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > private_key.pem
             chmod 600 private_key.pem
             scp -o StrictHostKeyChecking=no -i private_key.pem -P 2222 $GITHUB_WORKSPACE/build/libs/*.jar ubuntukjy@${{ secrets.HOST_IP }}:/spring/docker/compose/board/jar
+            
       # - name: Set SSH ssh-action
       #   uses: appleboy/ssh-action@master
       #   with:
@@ -41,7 +42,7 @@ jobs:
       #     key: ${{ secrets.SSH_PRIVATE_KEY }}
       #     port: 2222
       #     script: |
-      #             # 파일 전송
+      #             # 이건 ssh연결 된 상태에서 실행되는거라 추후에 dockerfile build나 이런거 할 때 여기에 명령어 작성하면 될듯 아래 명령어들은 다 쓰레기임
       #             echo " ====== "
       #             echo "start"
       #             echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r\' > private_key.pem
@@ -52,60 +53,6 @@ jobs:
       #             scp -o StrictHostKeyChecking=no -i private_key.pem -P 2222 $GITHUB_WORKSPACE/build/libs/*.jar ubuntukjy@${{ secrets.HOST_IP }}:/spring/docker/compose/board/jar
       #             echo "end"
       
-      # - name: Create SSH Key
-      #   run: |
-      #       echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/private_key.pem
-      #       chmod 600 ~/private_key.pem
-      # - name: Create SSH Dir
-      #   run: |
-      #       mkdir -p ~/.ssh
-            
-      # - name: Add knwon_hosts
-      #   run: |
-      #       ssh-keyscan localhost >> ~/.ssh/known_hosts
-
-      # - name: Copy jar file to Local Docker Container via SSH
-      #   run: |
-      #     # SSH를 사용해서 로컬 WSL에 파일 복사하기
-      #     scp -i ~/private_key.pem -v build/libs/*.jar root@localhost:/spring/docker/compose/board/jar
-          
-      # - name: Set up SSH
-      #   uses: webfactory/ssh-agent@v0.5.3
-      #   with:
-      #     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      # - name: Save SSH private key to file
-      #   run: |
-      #       echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > private_key.pem  # SSH_PRIVATE_KEY를 파일로 저장
-      #       chmod 600 private_key.pem  # 파일 권한 설정
-      #       ls -l private_key.pem  # 파일 권한 확인
-      #       cat private_key.pem  # 파일 내용 확인 (PEM 형식 확인)
-
-      # - name: Add SSH Host to hosts
-      #   run: |
-      #       ssh-keyscan -H localhost >> ~/.ssh/known_hosts  # 호스트 키를 known_hosts에 추가
-
-      # - name: Start SSH agent and add key
-      #   run: |
-      #       # ssh-add private_key.pem  # SSH 키 추가
-      #       ssh-add -L  # 에이전트에 추가된 키 목록 확인
-      #       eval $(ssh-agent -s)  # SSH 에이전트 시작
-
-      # - name: Verify known_hosts
-      #   run: |
-      #       cat ~/.ssh/known_hosts  # known_hosts 내용 확인
-
-      # - name: Test SSH Connect
-      #   run: |
-      #       ssh -vvv -o PasswordAuthentication=no root@localhost 'echo "SSH connection test successful"'  # SSH 연결 테스트
-
-          
-      # - name: Add Permissions for .jar file
-      #   run: chmod +x ./build/libs/*.jar
-        
-      # - name: Copy jar file to Local Docker Container via SSH
-      #   run:
-      #     # SSH를 사용해서 로컬 WSL에 파일 복사하기
-      #     scp -v build/libs/*.jar root@localhost:/home/root/spring/docker/compose/board/jar/
+      
         
         
