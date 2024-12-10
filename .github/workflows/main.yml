@@ -46,7 +46,7 @@ jobs:
 
       - name: Test SSH Connect
         run: |
-            ssh -vvv -o PasswordAuthentication=no StrictHostKeyChecking=no root@localhost echo "SSH connection test successful"
+            ssh -vvv -o PasswordAuthentication=no -o StrictHostKeyChecking=no root@localhost echo "SSH connection test successful"
           
       # - name: Add Permissions for .jar file
       #   run: chmod +x ./build/libs/*.jar
