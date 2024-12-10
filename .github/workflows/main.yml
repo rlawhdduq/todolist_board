@@ -34,7 +34,7 @@ jobs:
           port: 2222
           script: |
                   # 파일 전송
-                  scp -i ${{ secrets.SSH_PRIVATE_KEY }} -P 2222 build/libs/*.jar ubuntukjy@${{ secrets.HOST_IP }}:/spring/docker/compose/board/jar
+                  scp -P 2222 build/libs/*.jar ubuntukjy@${{ secrets.HOST_IP }}:/spring/docker/compose/board/jar
       
       # - name: Create SSH Key
       #   run: |
