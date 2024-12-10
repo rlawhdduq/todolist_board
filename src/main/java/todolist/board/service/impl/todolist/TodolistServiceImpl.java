@@ -190,7 +190,7 @@ public class TodolistServiceImpl implements TodolistService{
     }
     
     @Transactional(propagation = Propagation.REQUIRED)
-    private void repoDel(DeleteDto deleteDto)
+    private void repoDel(DeleteDto deleteDto) 
     {
         todolistRepository.deleteByTodolistIdBoardId(deleteDto.getKey(), deleteDto.getForeign_key());
     }
