@@ -26,7 +26,7 @@ jobs:
       #   run: ./gradlew clean build -x test # 빌드 과정에서 테스트 생략 -> 후일 테스트까지 하게 바꿔봐야겠다.
 
       - name: Set SSH ssh-action
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.8.0
         with:
           host: localhost
           username: root
