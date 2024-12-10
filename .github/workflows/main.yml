@@ -28,7 +28,7 @@ jobs:
       - name: Set SSH ssh-action
         uses: appleboy/ssh-action@master
         with:
-          host: localhost
+          host: 127.0.0.1
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
