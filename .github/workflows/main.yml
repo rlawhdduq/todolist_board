@@ -35,10 +35,10 @@ jobs:
             ssh-keyscan -H localhost >> ~/.ssh/known_hosts
       - name: Add SSH Key to Agent
         run: |
-            echo "$SSH_PRIVATE_KEY" > private_key.pem
-            chmod 600 private_key.pem
+            echo "$SSH_PRIVATE_KEY" > private_key.rsa
+            chmod 600 private_key.rsa
             eval $(ssh-agent -s)
-            ssh-add private_key.pem
+            ssh-add private_key.rsa
             ssh-add -L # key 목록 출력
             
       - name: Verify known_hosts
