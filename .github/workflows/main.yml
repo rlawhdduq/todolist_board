@@ -19,11 +19,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           
-      # - name: Add Permissions for gralde wrapper
-      #   run: chmod +x ./gradlew
+      - name: Add Permissions for gralde wrapper
+        run: chmod +x ./gradlew
         
-      # - name: Build with Gradle
-      #   run: ./gradlew clean build -x test # 빌드 과정에서 테스트 생략 -> 후일 테스트까지 하게 바꿔봐야겠다.
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test # 빌드 과정에서 테스트 생략 -> 후일 테스트까지 하게 바꿔봐야겠다.
 
       - name: Set SSH ssh-action
         uses: appleboy/ssh-action@master
