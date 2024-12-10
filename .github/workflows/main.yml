@@ -29,16 +29,6 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          
-      # - name: Set up SSH Key
-      #   run: |
-      #       mkdir -p ~/.ssh
-      #       echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-      #       chmod 600 ~/.ssh/id_rsa
-            
-      - name: Add Known Hosts
-        run: |
-            ssh-keyscan -H 172.17.42.90 >> ~/.ssh/known_hosts
 
       - name: Test SSH Connect
         run: |
