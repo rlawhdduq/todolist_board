@@ -36,10 +36,6 @@ jobs:
             echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key.pem
             chmod 600 private_key.pem
             cat private_key.pem
-            
-      - name: Convert PEM to OpenSSH format
-        run: |
-            ssh-keygen -f private_key.pem -m PEM -N "" -t rsa -C "converted_key"
 
       - name: Add SSH Host to hosts
         run: |
