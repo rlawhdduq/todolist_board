@@ -33,7 +33,18 @@ jobs:
       - name: Add SSH Host to hosts
         run: |
             ssh-keyscan -H localhost >> ~/.ssh/known_hosts
-
+      - name: Add SSH Key to Agent
+        run: |
+            echo "$SSH_PRIVATE_KEY" > private_key.pem
+            chmod 600 private_key.pem
+            eval $(ssh-agent -s)
+            ssh-add private_key.pem
+            ssh-add -L # key 목록 출력
+            
+      - name: Verify known_hosts
+        run: |
+            cat ~/.ssh/knwon_hosts
+            
       - name: Test SSH Connect
         run: |
             ssh -vvv -o PasswordAuthentication=no root@localhost 'echo "SSH connection test successful"'
