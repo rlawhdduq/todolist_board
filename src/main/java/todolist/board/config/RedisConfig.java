@@ -1,25 +1,30 @@
 package todolist.board.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.aspectj.bridge.MessageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.connection.MessageListener;
-import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.PatternTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class RedisConfig {
     
-    @Autowired
-    private RedisConnectionFactory redisConnectionFactory;
+    @Value("${spring.redis.data.host}")
+    private String redisHost;
+    @Value("${spring.redis.data.port}")
+    private int redisPort;
 
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory()
+    {
+        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisHost, redisPort);
+        return lettuceConnectionFactory;
+    }
+    
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory)
     {
