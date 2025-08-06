@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.repository.query.Param;
 import todolist.board.domain.Board;
 import todolist.board.dto.board.BoardDetailDto;
 import todolist.board.dto.board.BoardListDto;

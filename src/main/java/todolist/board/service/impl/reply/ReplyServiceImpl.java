@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.Acknowledgment;
+// import org.springframework.kafka.annotation.KafkaListener;
+// import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,42 +16,42 @@ import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.reply.ReplyDto;
 import todolist.board.repository.ReplyRepository;
-import todolist.board.service.KafkaProducer;
+// import todolist.board.service.KafkaProducer;
 import todolist.board.service.ReplyService;
 
 @Service
 public class ReplyServiceImpl implements ReplyService{
 
-    @Autowired
-    private KafkaProducer kafka;
+    // @Autowired
+    // private KafkaProducer kafka;
     
     @Autowired
     private ReplyRepository replyRepository;
 
-    @Override
-    public void insert(ReplyDto replyDto)
-    {
-        callKafka("reply-insert", replyDto);
-        return;
-    }
-    @Override
-    public void update(ReplyDto replyDto)
-    {
-        callKafka("reply-update", replyDto);
-        return;
-    }
-    @Override
-    public void delete(DeleteDto deleteDto)
-    {
-        callKafka("reply-delete", deleteDto);
-        return;
-    }
-    @Override
-    public void detailDelete(DetailDeleteDto detailDeleteDto)
-    {
-        callKafka("reply-delete-detail", detailDeleteDto);
-        return;
-    }
+    // @Override
+    // public void insert(ReplyDto replyDto)
+    // {
+    //     callKafka("reply-insert", replyDto);
+    //     return;
+    // }
+    // @Override
+    // public void update(ReplyDto replyDto)
+    // {
+    //     callKafka("reply-update", replyDto);
+    //     return;
+    // }
+    // @Override
+    // public void delete(DeleteDto deleteDto)
+    // {
+    //     callKafka("reply-delete", deleteDto);
+    //     return;
+    // }
+    // @Override
+    // public void detailDelete(DetailDeleteDto detailDeleteDto)
+    // {
+    //     callKafka("reply-delete-detail", detailDeleteDto);
+    //     return;
+    // }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
@@ -69,73 +69,73 @@ public class ReplyServiceImpl implements ReplyService{
         return;
     }
 
-    @KafkaListener
-    (
-        topics = "reply-insert", 
-        groupId = "board",
-        containerFactory = "replyDtoKafkaListenerContainerFactory"
-    )
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void insert(ReplyDto replyDto, Acknowledgment ack)
-    {
-        Reply insReply = Reply.builder()
-                              .board_id(replyDto.getBoard_id())
-                              .user_id(replyDto.getUser_id())
-                              .parent_id(replyDto.getParent_id())
-                              .reply_depth(replyDto.getReply_depth())
-                              .content(replyDto.getContent())
-                              .build();
-        repoSave(insReply);
-        ack.acknowledge();
-    }
+    // @KafkaListener
+    // (
+    //     topics = "reply-insert", 
+    //     groupId = "board",
+    //     containerFactory = "replyDtoKafkaListenerContainerFactory"
+    // )
+    // @Transactional(propagation = Propagation.REQUIRED)
+    // public void insert(ReplyDto replyDto, Acknowledgment ack)
+    // {
+    //     Reply insReply = Reply.builder()
+    //                           .board_id(replyDto.getBoard_id())
+    //                           .user_id(replyDto.getUser_id())
+    //                           .parent_id(replyDto.getParent_id())
+    //                           .reply_depth(replyDto.getReply_depth())
+    //                           .content(replyDto.getContent())
+    //                           .build();
+    //     repoSave(insReply);
+    //     ack.acknowledge();
+    // }
     
-    @KafkaListener
-    (
-        topics = "reply-update", 
-        groupId = "board",
-        containerFactory = "replyDtoKafkaListenerContainerFactory"
-    )
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void update(ReplyDto replyDto, Acknowledgment ack)
-    {
-        Reply insReply = Reply.builder()
-                              .reply_id(replyDto.getReply_id())
-                              .board_id(replyDto.getBoard_id())
-                              .user_id(replyDto.getUser_id())
-                              .parent_id(replyDto.getParent_id())
-                              .content(replyDto.getContent())
-                              .reply_depth(replyDto.getReply_depth())
-                              .update_time(LocalDateTime.now())
-                              .build();
-        repoSave(insReply);
-        ack.acknowledge();
-    }
+    // @KafkaListener
+    // (
+    //     topics = "reply-update", 
+    //     groupId = "board",
+    //     containerFactory = "replyDtoKafkaListenerContainerFactory"
+    // )
+    // @Transactional(propagation = Propagation.REQUIRED)
+    // public void update(ReplyDto replyDto, Acknowledgment ack)
+    // {
+    //     Reply insReply = Reply.builder()
+    //                           .reply_id(replyDto.getReply_id())
+    //                           .board_id(replyDto.getBoard_id())
+    //                           .user_id(replyDto.getUser_id())
+    //                           .parent_id(replyDto.getParent_id())
+    //                           .content(replyDto.getContent())
+    //                           .reply_depth(replyDto.getReply_depth())
+    //                           .update_time(LocalDateTime.now())
+    //                           .build();
+    //     repoSave(insReply);
+    //     ack.acknowledge();
+    // }
 
-    @KafkaListener
-    (
-        topics = "reply-delete", 
-        groupId = "board",
-        containerFactory = "delKafkaListenerContainerFactory"
-    )
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void delete(DeleteDto deleteDto, Acknowledgment ack)
-    {
-        repoDel(deleteDto);
-        ack.acknowledge();
-    }
+    // @KafkaListener
+    // (
+    //     topics = "reply-delete", 
+    //     groupId = "board",
+    //     containerFactory = "delKafkaListenerContainerFactory"
+    // )
+    // @Transactional(propagation = Propagation.REQUIRED)
+    // public void delete(DeleteDto deleteDto, Acknowledgment ack)
+    // {
+    //     repoDel(deleteDto);
+    //     ack.acknowledge();
+    // }
 
-    @KafkaListener
-    (
-        topics = "reply-delete-detail", 
-        groupId = "board",
-        containerFactory = "detailDelKafkaListenerContainerFactory"
-    )
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void detailDelete(DetailDeleteDto detailDeleteDto, Acknowledgment ack)
-    {
-        repoDetailDel(detailDeleteDto);
-        ack.acknowledge();
-    }
+    // @KafkaListener
+    // (
+    //     topics = "reply-delete-detail", 
+    //     groupId = "board",
+    //     containerFactory = "detailDelKafkaListenerContainerFactory"
+    // )
+    // @Transactional(propagation = Propagation.REQUIRED)
+    // public void detailDelete(DetailDeleteDto detailDeleteDto, Acknowledgment ack)
+    // {
+    //     repoDetailDel(detailDeleteDto);
+    //     ack.acknowledge();
+    // }
 
     @Override
     public List<ReplyDto> select(Long board_id)
@@ -144,12 +144,12 @@ public class ReplyServiceImpl implements ReplyService{
         return replyList;
     }
 
-    // Private Method
-    private void callKafka(String topic, Object dto)
-    {
-        kafka.sendMessage(topic, dto);
-        return;
-    }
+    // // Private Method
+    // private void callKafka(String topic, Object dto)
+    // {
+    //     kafka.sendMessage(topic, dto);
+    //     return;
+    // }
     @Transactional(propagation = Propagation.REQUIRED)
     private void repoSave(Reply reply)
     {
@@ -166,3 +166,6 @@ public class ReplyServiceImpl implements ReplyService{
         replyRepository.detailDelete(detailDeleteDto.getForeign_key(), detailDeleteDto.getKey_list());
     }
 }
+
+// 비동기 메시지 큐 방식(카프카, 레디스 사용)에서 RestApi 방식으로 구현방향을 변경함에 따라 기존에 사용하던 의존성들을 주석처리한다.
+// 비동기 메시지 큐 방식은 RestApi 방식으로 구현을 마친 후 성능개선을 위해 해당방식으로 변경할 때 다시 주석을 풀고 사용하자.
