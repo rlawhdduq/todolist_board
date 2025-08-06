@@ -27,10 +27,14 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-webflux' // WebClient
 
-    implementation 'org.springframework.kafka:spring-kafka' // Spring Kafka 의존성
-    implementation 'org.springframework.boot:spring-boot-starter-actuator' // Spring Boot Actuator (모니터링 용도)
-    implementation 'org.springframework.boot:spring-boot-starter-logging' // Gradle 빌드 시 사용
-
+	// 비동기 메시지 큐 방식(카프카, 레디스 사용)에서 RestApi 방식으로 구현방향을 변경함에 따라 기존에 사용하던 의존성들을 주석처리한다.
+	// 비동기 메시지 큐 방식은 RestApi 방식으로 구현을 마친 후 성능개선을 위해 해당방식으로 변경할 때 다시 주석을 풀고 사용하자.
+    //implementation 'org.springframework.kafka:spring-kafka' // Spring Kafka 의존성
+    //implementation 'org.springframework.boot:spring-boot-starter-actuator' // Spring Boot Actuator (모니터링 용도)
+    //implementation 'org.springframework.boot:spring-boot-starter-logging' // Gradle 빌드 시 사용
+	// implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // implementation 'org.springframework.boot:spring-boot-starter-cache'  // 캐시 관련 기능 추가
+    // implementation 'redis.clients:jedis'  // Jedis 클라이언트 라이브러리
 	implementation 'mysql:mysql-connector-java'
 	implementation 'mysql:mysql-connector-java:8.0.33'
 	
@@ -40,10 +44,6 @@ dependencies {
 
 	// Spring WebSocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
-
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'org.springframework.boot:spring-boot-starter-cache'  // 캐시 관련 기능 추가
-    implementation 'redis.clients:jedis'  // Jedis 클라이언트 라이브러리
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
