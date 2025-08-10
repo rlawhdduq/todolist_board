@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-
 import todolist.board.domain.Board;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.delete.DeleteDto;
@@ -56,12 +54,12 @@ public class BoardServiceImpl implements BoardService{
     private WebClient webClient;
     // @Autowired
     // private KafkaProducer kafka;
-    @Autowired
-    private SimpMessagingTemplate messageTemplate;
 
     @Value("${service.url}")
     private String followUrl;
 
+    @Value("${service.url.gt}")
+    private String gatewayUrl;
     // @Override
     // public void insert(BoardDto boardDto)
     // {
@@ -158,6 +156,41 @@ public class BoardServiceImpl implements BoardService{
     //     repoDetailDel(detailDeleteDto);
     //     ack.acknowledge();
     // }
+    @Override
+    public void insert(BoardDto boardDto)
+    {
+        Board insBoard = Board.builder()
+                              .user_id(boardDto.getUser_id())
+                              .scope_of_disclosure(boardDto.getScope_of_disclosure())
+                              .content(boardDto.getContent())
+                              .build();
+        Board returnBoard = repoINS(insBoard, boardDto);
+        webClient.post().uri(gatewayUrl+"/noti").bodyValue(returnBoard).retrieve().bodyToMono(String.class).block();
+    }
+    @Override
+    public void update(BoardDto boardDto)
+    {
+        Board updBoard = Board.builder()
+                        .board_id(boardDto.getBoard_id())
+                        .user_id(boardDto.getUser_id())
+                        .scope_of_disclosure(boardDto.getScope_of_disclosure())
+                        .fulfillment_or_not(boardDto.getFulfillment_or_not())
+                        .fulfillment_time(boardDto.getFulfillment_time())
+                        .content(boardDto.getContent())
+                        .update_time(LocalDateTime.now())
+                        .build();
+        repoUPD(updBoard, boardDto);
+    }
+    @Override
+    public void delete(DeleteDto deleteDto)
+    {
+        repoDel(deleteDto);
+    }
+    @Override
+    public void detailDelete(DetailDeleteDto detailDeleteDto)
+    {
+        repoDetailDel(detailDeleteDto);
+    }
     /*
      * 게시글 조회의 경우 로직이 복잡하다.
      * 회원유형과 친구관계가 얽혀있기때문이다.

@@ -21,6 +21,11 @@ public interface BoardService {
     // void update(BoardDto boardDto);
     // void delete(DeleteDto deleteDto);
     // void detailDelete(DetailDeleteDto detailDeleteDto);
+    
+    void insert(BoardDto boardDto);
+    void update(BoardDto boardDto);
+    void delete(DeleteDto deleteDto);
+    void detailDelete(DetailDeleteDto detailDeleteDto);
     BoardDetailDto getDetailBoard(Long board_id, Long user_id);  // 게시글 상세
     List<BoardListDto> getBoard(Long user_id, Integer limit, Long board_id);        // 특정 유저가 볼 수 있는 게시글 조회
 
