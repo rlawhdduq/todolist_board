@@ -14,6 +14,11 @@ public interface ReplyService {
     // void update(ReplyDto replyDto);
     // void delete(DeleteDto deleteDto);
     // void detailDelete(DetailDeleteDto DetailDeleteDto);
+
+    void insert(ReplyDto replyDto);
+    void update(ReplyDto replyDto);
+    void delete(DeleteDto deleteDto);
+    void detailDelete(DetailDeleteDto detailDeleteDto);
     List<ReplyDto> select(Long board_id);
 
     void deleteFromBoard(Long board_id);

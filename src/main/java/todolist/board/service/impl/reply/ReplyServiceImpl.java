@@ -144,6 +144,43 @@ public class ReplyServiceImpl implements ReplyService{
         return replyList;
     }
 
+    @Override
+    public void insert(ReplyDto replyDto)
+    {
+        Reply insReply = Reply.builder()
+                              .board_id(replyDto.getBoard_id())
+                              .user_id(replyDto.getUser_id())
+                              .parent_id(replyDto.getParent_id())
+                              .reply_depth(replyDto.getReply_depth())
+                              .content(replyDto.getContent())
+                              .build();
+        repoSave(insReply);
+    }
+    @Override
+    public void update(ReplyDto replyDto)
+    {
+        Reply insReply = Reply.builder()
+                              .reply_id(replyDto.getReply_id())
+                              .board_id(replyDto.getBoard_id())
+                              .user_id(replyDto.getUser_id())
+                              .parent_id(replyDto.getParent_id())
+                              .content(replyDto.getContent())
+                              .reply_depth(replyDto.getReply_depth())
+                              .update_time(LocalDateTime.now())
+                              .build();
+        repoSave(insReply);
+    }
+    @Override
+    public void delete(DeleteDto deleteDto)
+    {
+        repoDel(deleteDto);
+    }
+    @Override
+    public void detailDelete(DetailDeleteDto detailDeleteDto)
+    {
+        repoDetailDel(detailDeleteDto);
+    }
+
     // // Private Method
     // private void callKafka(String topic, Object dto)
     // {

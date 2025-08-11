@@ -20,24 +20,24 @@ public class TodolistApi {
     
     @PostMapping("/api/board/todolist")
     public void insertTodolist(@RequestBody TodolistDto todolistDto) {
-        // todolistService.insert(todolistDto);
+        todolistService.insert(todolistDto);
         return;
     }
     @PutMapping("/api/board/todolist")
     public void updateTodolist(@RequestBody TodolistDto todolistDto) {
-        // todolistService.update(todolistDto);
+        todolistService.update(todolistDto);
         return;
     }
     @DeleteMapping("/api/board/todolist")
     public void deleteTodolist(@RequestBody DeleteDto deleteDto)
     {
-        // todolistService.delete(deleteDto);
+        todolistService.delete(deleteDto);
         return;
     }
     @DeleteMapping("/api/board/todolist/detail")
     public void detailDeleteTodolist(@RequestBody DetailDeleteDto detailDeleteDto)
     {
-        // todolistService.detailDelete(detailDeleteDto);
+        todolistService.detailDelete(detailDeleteDto);
         return;
     }
 }

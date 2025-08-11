@@ -15,6 +15,11 @@ public interface TodolistService {
     // void delete(DeleteDto deleteDto);
     // void detailDelete(DetailDeleteDto detailDeleteDto);
     List<TodolistDto> select(Long board_id);
+
+    void insert(TodolistDto todolistDto);
+    void update(TodolistDto todolistDto);
+    void delete(DeleteDto deleteDto);
+    void detailDelete(DetailDeleteDto detailDeleteDto);
     
     void insertFromBoard(TodolistDto todolistDto);
     void updateFromBoard(TodolistDto todolistDto);

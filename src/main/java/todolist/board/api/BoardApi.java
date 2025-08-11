@@ -55,25 +55,25 @@ public class BoardApi {
     }
     @PostMapping("/api/board")
     public void insertBoard(@RequestBody BoardDto boardDto) {
-        // boardService.insert(boardDto);
+        boardService.insert(boardDto);
         return;
     }
     @PutMapping("/api/board")
     public void updateBoard(@RequestBody BoardDto boardDto)
     {
-        // boardService.update(boardDto);
+        boardService.update(boardDto);
         return;
     }
     @DeleteMapping("/api/board")
     public void deleteBoard(@RequestBody DeleteDto deleteDto)
     {
-        // boardService.delete(deleteDto);
+        boardService.delete(deleteDto);
         return;
     }
     @DeleteMapping("/api/board/detail")
     public void detailDeleteBoard(@RequestBody DetailDeleteDto detailDeleteDto)
     {
-        // boardService.detailDelete(detailDeleteDto);
+        boardService.detailDelete(detailDeleteDto);
         return;
     }
 }
