@@ -215,7 +215,7 @@ public class BoardServiceImpl implements BoardService{
     {
         limit = limit <= 0 ? 0 : limit;
         board_id = board_id == null ? Long.MAX_VALUE : board_id;
-        
+        Map<String, List<Long>> followList = this.userList(user_id);
         // isThereCache(user_id);
         
         // Map<String, Object> userIdList = (Map<String, Object>) Optional.ofNullable(redisService.getRedis(user_id.toString())).orElse(new HashMap());
@@ -224,7 +224,7 @@ public class BoardServiceImpl implements BoardService{
         // List<Long> cUserList = (List<Long>) Optional.ofNullable(userIdList.get("C")).orElse(new ArrayList<>());
         // // List<BoardListDto> boardDto = boardRepository.getBoardList(aUserList, fUserList, cUserList, board_id, limit);
         // List<BoardListDto> boardDto = boardRepository.getBoardList(fUserList, cUserList, board_id, limit);
-        List<BoardListDto> boardDto = boardRepository.getBoardList(null, null, board_id, limit);
+        List<BoardListDto> boardDto = boardRepository.getBoardList(followList.get("F"), followList.get("C"), board_id, limit);
 
         return boardDto;
     }
@@ -236,7 +236,8 @@ public class BoardServiceImpl implements BoardService{
         // List<Long> user_id_list = (List<Long>) redisService.getRedis(user_id.toString());
         // Map<String, Object> user_id_list = (Map<String, Object>) redisService.getRedis(user_id.toString());
         // BoardDetailDto boardList    = boardRepository.getDetailBoard(board_id, (List<Long>) user_id_list.get("F"));
-        BoardDetailDto boardList    = boardRepository.getDetailBoard(board_id, null);
+        Map<String, List<Long>> followList = this.userList(user_id);
+        BoardDetailDto boardList    = boardRepository.getDetailBoard(board_id, followList.get("F"));
         List<TodolistDto> todolist  = boardRepository.getTodolist(board_id);
         List<ReplyDto> reply        = boardRepository.getReply(board_id);
 
@@ -303,18 +304,18 @@ public class BoardServiceImpl implements BoardService{
     //     }
     // }
 
-    // private void userList(Long user_id)
-    // {
-    //     /*
-    //      * 캐시 조회 후 저장 
-    //      * Restful
-    //      */
-    //     Map<String, Object> userList = webClient.get()
-    //                                     .uri(followUrl+"?user_id={user_id}", user_id)
-    //                                     .retrieve()
-    //                                     .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {}).block();
-    //     redisService.setRedis(user_id.toString(), userList);
-    // }
+    private Map<String, List<Long>> userList(Long user_id)
+    {
+        /*
+         * 캐시 조회 후 저장 
+         * Restful
+         */
+        Map<String, List<Long>> userList = webClient.get()
+                                        .uri(followUrl+"?user_id={user_id}", user_id)
+                                        .retrieve()
+                                        .bodyToMono(new ParameterizedTypeReference<Map<String, List<Long>>>() {}).block();
+        return userList;
+    }
 
 }
 
