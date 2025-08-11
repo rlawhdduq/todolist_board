@@ -26,23 +26,23 @@ public class ReplyApi {
 
     @PostMapping("/api/board/reply")
     public void insertReply(@RequestBody ReplyDto replyDto) {
-        // replyService.insert(replyDto);
+        replyService.insert(replyDto);
         return;
     }
     @PutMapping("/api/board/reply")
     public void updateReply(@RequestBody ReplyDto replyDto) {
-        // replyService.update(replyDto);
+        replyService.update(replyDto);
     }
     @DeleteMapping("/api/board/reply")
     public void deleteReply(@RequestBody DeleteDto deleteDto)
     {
-        // replyService.delete(deleteDto);
+        replyService.delete(deleteDto);
         return;
     }
     @DeleteMapping("/api/board/reply/detail")
     public void detailDeleteReply(@RequestBody DetailDeleteDto detailDeleteDto)
     {
-        // replyService.detailDelete(detailDeleteDto);
+        replyService.detailDelete(detailDeleteDto);
         return;
     }
     

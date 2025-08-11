@@ -54,6 +54,43 @@ public class TodolistServiceImpl implements TodolistService{
     //     callKafka("todolist-delete-detail", (Object) detailDeleteDto);
     //     return;
     // }
+    @Override 
+    public void insert(TodolistDto todolistDto)
+    {
+        Todolist insTodolist = Todolist.builder()
+                                       .board_id(todolistDto.getBoard_id())
+                                       .todo_type(todolistDto.getTodo_type())
+                                       .todo_type_detail(todolistDto.getTodo_type_detail())
+                                       .todo_unit(todolistDto.getTodo_unit())
+                                       .todo_number(todolistDto.getTodo_number())
+                                       .build();
+        repoSave(insTodolist);
+    }
+    @Override 
+    public void update(TodolistDto todolistDto)
+    {
+        Todolist insTodolist = Todolist.builder()
+                                       .todolist_id(todolistDto.getTodolist_id())
+                                       .board_id(todolistDto.getBoard_id())
+                                       .todo_type(todolistDto.getTodo_type())
+                                       .todo_type_detail(todolistDto.getTodo_type_detail())
+                                       .todo_unit(todolistDto.getTodo_unit())
+                                       .todo_number(todolistDto.getTodo_number())
+                                       .fulfillment_or_not(todolistDto.getFulfillment_or_not())
+                                       .update_time(LocalDateTime.now())
+                                       .build();
+        repoSave(insTodolist);
+    }
+    @Override 
+    public void delete(DeleteDto deleteDto)
+    {
+        repoDel(deleteDto);
+    }
+    @Override 
+    public void detailDelete(DetailDeleteDto detailDeleteDto)
+    {
+        repoDetailDel(detailDeleteDto);
+    }
 
     @Override
     public void insertFromBoard(TodolistDto todolistDto)
