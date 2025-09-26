@@ -1,4 +1,4 @@
-package todolist.board.api;
+package todolist.board.api.mq;
 
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/board")
+@RequestMapping("/api/v2/board")
 public class BoardApi {
 
     @Autowired
