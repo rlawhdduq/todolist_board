@@ -1,4 +1,4 @@
-package todolist.board.api;
+package todolist.board.api.rest;
 
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/board")
+@RequestMapping("/rest")
 public class BoardApi {
 
     @Autowired
@@ -41,10 +41,15 @@ public class BoardApi {
      * 
      * 로그인 시 세션에 user_id, user_type을 넣어두기 때문에 저거 두개로 조회쿼리를 제어하면 될 것 같다.
      * 지금 드는 생각은 쿼리가 좀 복잡하게 짜여질 것 같은데 어떻게 해보면 되겠지 머...
+     * 25.09.27(rest로 구현)
+     *  1. 게시글 목록을 가져올 때 서비스에선 user_id만 가져온다.
+     *  2. user_id를 가지고 follow 서비스를 호출하여 현재 들어온 user_id의 친구 목록을 가져온다.
+     *  => 이렇게되면 게시글과 친구목록의 결합도가 상승하겠지만 방법이 없다. 추후 mq를 도입하게 되면 이부분은 캐싱처리가 될 것이기때문에 아키텍쳐간 결합도가 줄어들 것이다.
      */
     @RequestMapping(method=RequestMethod.GET)
-    public List<BoardListDto> getBoard(@RequestParam Long user_id, @RequestParam Integer limit, @RequestParam(required = false) Long board_id) {
-        List<BoardListDto> boardList = boardService.getBoard(user_id, limit, board_id);
+    public List<BoardListDto> getBoard(@PathVariable Long user_id) {
+        // List<BoardListDto> boardList = boardService.getBoard(user_id);
+        List<BoardListDto> boardList = null;
         return boardList;
     }
     
