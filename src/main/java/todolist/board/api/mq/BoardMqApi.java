@@ -8,7 +8,7 @@ import todolist.board.dto.board.BoardDto;
 import todolist.board.dto.board.BoardListDto;
 import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
-import todolist.board.service.BoardService;
+import todolist.board.service.mq.BoardService;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/board")
-public class BoardApi {
+public class BoardMqApi {
 
     @Autowired
     private final BoardService boardService;

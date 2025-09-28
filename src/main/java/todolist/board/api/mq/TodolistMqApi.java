@@ -1,11 +1,11 @@
-package todolist.board.api.v2;
+package todolist.board.api.mq;
 
 import org.springframework.web.bind.annotation.RestController;
 
 import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.todolist.TodolistDto;
-import todolist.board.service.TodolistService;
+import todolist.board.service.mq.TodolistService;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
 @RestController
-public class TodolistApi {
+public class TodolistMqApi {
     @Autowired
     private TodolistService todolistService;
     

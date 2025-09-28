@@ -1,11 +1,11 @@
-package todolist.board.api.v2;
+package todolist.board.api.mq;
 
 import org.springframework.web.bind.annotation.RestController;
 
 import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.reply.ReplyDto;
-import todolist.board.service.ReplyService;
+import todolist.board.service.mq.ReplyService;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
-public class ReplyApi {
+public class ReplyMqApi {
     
     @Autowired
     private ReplyService replyService;

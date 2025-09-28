@@ -1,4 +1,4 @@
-package todolist.board.service.impl.todolist;
+package todolist.board.service.rest.impl.todolist;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,9 +19,9 @@ import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.todolist.TodolistDto;
 import todolist.board.repository.TodolistRepository;
 // import todolist.board.service.KafkaProducer;
-import todolist.board.service.TodolistService;
+import todolist.board.service.rest.TodolistService;
 
-@Service
+@Service("restTodoService")
 public class TodolistServiceImpl implements TodolistService{
     
     private static final Logger log = LoggerFactory.getLogger(TodolistServiceImpl.class);

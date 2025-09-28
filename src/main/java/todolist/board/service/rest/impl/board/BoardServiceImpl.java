@@ -1,4 +1,4 @@
-package todolist.board.service.impl.board;
+package todolist.board.service.rest.impl.board;
 
 import java.util.List;
 import java.util.Map;
@@ -29,13 +29,13 @@ import todolist.board.dto.redis.RedisUserListDto;
 import todolist.board.dto.reply.ReplyDto;
 import todolist.board.dto.todolist.TodolistDto;
 import todolist.board.repository.BoardRepository;
-import todolist.board.service.BoardService;
+import todolist.board.service.rest.BoardService;
 // import todolist.board.service.RedisService;
-import todolist.board.service.ReplyService;
-import todolist.board.service.TodolistService;
+import todolist.board.service.rest.ReplyService;
+import todolist.board.service.rest.TodolistService;
 // import todolist.board.service.KafkaProducer;
 
-@Service
+@Service("restBoardService")
 public class BoardServiceImpl implements BoardService{
     
     private static final Logger log = LoggerFactory.getLogger(BoardServiceImpl.class);

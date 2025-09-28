@@ -1,4 +1,4 @@
-package todolist.board.service;
+package todolist.board.service.mq;
 
 import java.util.List;
 

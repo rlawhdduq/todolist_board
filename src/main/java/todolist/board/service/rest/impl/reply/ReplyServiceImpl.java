@@ -1,4 +1,4 @@
-package todolist.board.service.impl.reply;
+package todolist.board.service.rest.impl.reply;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,9 +17,9 @@ import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.reply.ReplyDto;
 import todolist.board.repository.ReplyRepository;
 // import todolist.board.service.KafkaProducer;
-import todolist.board.service.ReplyService;
+import todolist.board.service.rest.ReplyService;
 
-@Service
+@Service("restReplyService")
 public class ReplyServiceImpl implements ReplyService{
 
     // @Autowired
