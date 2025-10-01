@@ -11,6 +11,7 @@ import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.service.rest.BoardService;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,10 +52,10 @@ public class BoardRestApi {
     /*
      * 이것도 전체 게시글 조회에서 만들어진 로직에 + board_id만 넣으면 된다.
      */
-    @RequestMapping(path="/detail", method=RequestMethod.GET)
-    public BoardDetailDto getBoardDetail(@RequestParam Long user_id, @RequestParam Long board_id)
+    @RequestMapping(path="/detail/{boardId}", method=RequestMethod.GET)
+    public BoardDetailDto getBoardDetail(@PathVariable Long boardId)
     {
-        BoardDetailDto boardDetailDto = boardService.getDetailBoard(board_id);
+        BoardDetailDto boardDetailDto = boardService.getDetailBoard(boardId);
         return boardDetailDto;
     }
 
@@ -70,15 +71,15 @@ public class BoardRestApi {
         return;
     }
     @RequestMapping(method=RequestMethod.DELETE)
-    public void deleteBoard(@RequestBody DeleteDto deleteDto)
+    public void deleteBoard(@RequestParam Long boardId, @RequestParam Long userId)
     {
-        boardService.delete(deleteDto);
+        boardService.delete(boardId, userId);
         return;
     }
     @RequestMapping(path="/detail", method=RequestMethod.DELETE)
-    public void detailDeleteBoard(@RequestBody DetailDeleteDto detailDeleteDto)
+    public void detailDeleteBoard(@RequestParam List<Long> boardIds, Long userId)
     {
-        boardService.detailDelete(detailDeleteDto);
+        boardService.detailDelete(boardIds, userId);
         return;
     }
 }

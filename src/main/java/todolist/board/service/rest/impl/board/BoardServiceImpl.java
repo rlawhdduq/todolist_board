@@ -79,14 +79,14 @@ public class BoardServiceImpl implements BoardService{
         repoUPD(updBoard, boardDto);
     }
     @Override
-    public void delete(DeleteDto deleteDto)
+    public void delete(Long boardId, Long userId)
     {
-        repoDel(deleteDto);
+        repoDel(boardId, userId);
     }
     @Override
-    public void detailDelete(DetailDeleteDto detailDeleteDto)
+    public void detailDelete(List<Long> boardIds, Long userId)
     {
-        repoDetailDel(detailDeleteDto);
+        repoDetailDel(boardIds, userId);
     }
     /*
      * 게시글 조회의 경우 로직이 복잡하다.
@@ -166,19 +166,19 @@ public class BoardServiceImpl implements BoardService{
         }
     }
     @Transactional(propagation = Propagation.REQUIRED)
-    private void repoDel(DeleteDto deleteDto)
+    private void repoDel(Long boardId, Long userId)
     {
-        todolistService.deleteFromBoard(deleteDto.getKey());
-        replyService.deleteFromBoard(deleteDto.getKey());
-        boardRepository.deleteByBoardUserId(deleteDto.getKey(), deleteDto.getForeign_key());
+        todolistService.deleteFromBoard(boardId);
+        replyService.deleteFromBoard(boardId);
+        boardRepository.deleteByBoardUserId(boardId, userId);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    private void repoDetailDel(DetailDeleteDto detailDeleteDto)
+    private void repoDetailDel(List<Long> boardIds, Long userId)
     {
-        todolistService.detailDeleteFromBoard(detailDeleteDto.getKey_list());
-        replyService.detailDeleteFromBoard(detailDeleteDto.getKey_list());
-        boardRepository.detailDelete(detailDeleteDto.getKey_list(), detailDeleteDto.getForeign_key());
+        todolistService.detailDeleteFromBoard(boardIds);
+        replyService.detailDeleteFromBoard(boardIds);
+        boardRepository.detailDelete(boardIds, userId);
     }
 
     // private void isThereCache(Long user_id)
