@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import todolist.board.dto.board.BoardDetailDto;
 import todolist.board.dto.board.BoardDto;
 import todolist.board.dto.board.BoardListDto;
+import todolist.board.dto.board.GetBoardDto;
 import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.service.rest.BoardService;
@@ -47,9 +48,9 @@ public class BoardRestApi {
      *  => 이렇게되면 게시글과 친구목록의 결합도가 상승하겠지만 방법이 없다. 추후 mq를 도입하게 되면 이부분은 캐싱처리가 될 것이기때문에 아키텍쳐간 결합도가 줄어들 것이다.
      */
     @RequestMapping(method=RequestMethod.GET)
-    public List<BoardListDto> getBoard(@PathVariable Long user_id) {
-        // List<BoardListDto> boardList = boardService.getBoard(user_id);
-        List<BoardListDto> boardList = null;
+    public List<BoardListDto> getBoard(GetBoardDto getBoardDto)
+    {
+        List<BoardListDto> boardList = boardService.getBoard(getBoardDto);
         return boardList;
     }
     
@@ -57,8 +58,9 @@ public class BoardRestApi {
      * 이것도 전체 게시글 조회에서 만들어진 로직에 + board_id만 넣으면 된다.
      */
     @RequestMapping(path="/detail", method=RequestMethod.GET)
-    public BoardDetailDto getBoardDetail(@RequestParam Long user_id, @RequestParam Long board_id) {
-        BoardDetailDto boardDetailDto = boardService.getDetailBoard(board_id, user_id);
+    public BoardDetailDto getBoardDetail(@RequestParam Long user_id, @RequestParam Long board_id)
+    {
+        BoardDetailDto boardDetailDto = boardService.getDetailBoard(board_id);
         return boardDetailDto;
     }
 

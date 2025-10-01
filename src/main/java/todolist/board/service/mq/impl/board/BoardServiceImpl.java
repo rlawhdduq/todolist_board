@@ -28,7 +28,7 @@ import todolist.board.dto.board.BoardListDto;
 import todolist.board.dto.redis.RedisUserListDto;
 import todolist.board.dto.reply.ReplyDto;
 import todolist.board.dto.todolist.TodolistDto;
-import todolist.board.repository.BoardRepository;
+import todolist.board.repository.mq.BoardRepository;
 import todolist.board.service.mq.BoardService;
 // import todolist.board.service.RedisService;
 import todolist.board.service.mq.ReplyService;

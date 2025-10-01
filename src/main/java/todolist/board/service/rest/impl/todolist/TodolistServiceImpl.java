@@ -17,7 +17,7 @@ import todolist.board.domain.Todolist;
 import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.todolist.TodolistDto;
-import todolist.board.repository.TodolistRepository;
+import todolist.board.repository.rest.TodolistRepository;
 // import todolist.board.service.KafkaProducer;
 import todolist.board.service.rest.TodolistService;
 

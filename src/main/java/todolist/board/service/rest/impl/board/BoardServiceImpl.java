@@ -25,10 +25,10 @@ import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.board.BoardDetailDto;
 import todolist.board.dto.board.BoardDto;
 import todolist.board.dto.board.BoardListDto;
-import todolist.board.dto.redis.RedisUserListDto;
+import todolist.board.dto.board.GetBoardDto;
 import todolist.board.dto.reply.ReplyDto;
 import todolist.board.dto.todolist.TodolistDto;
-import todolist.board.repository.BoardRepository;
+import todolist.board.repository.rest.BoardRepository;
 import todolist.board.service.rest.BoardService;
 // import todolist.board.service.RedisService;
 import todolist.board.service.rest.ReplyService;
@@ -40,122 +40,19 @@ public class BoardServiceImpl implements BoardService{
     
     private static final Logger log = LoggerFactory.getLogger(BoardServiceImpl.class);
 
-    // @Autowired
-    // private RedisService redisService;
     @Autowired
     private TodolistService todolistService;
     @Autowired
     private ReplyService replyService;
-
     @Autowired
     private BoardRepository boardRepository;
-
     @Autowired
     private WebClient webClient;
-    // @Autowired
-    // private KafkaProducer kafka;
-
     @Value("${service.url}")
     private String followUrl;
-
     @Value("${service.url.gt}")
     private String gatewayUrl;
-    // @Override
-    // public void insert(BoardDto boardDto)
-    // {
-    //     callKafka("board-insert", (Object) boardDto);
-    // }
-    // @Override
-    // public void update(BoardDto boardDto)
-    // {
-    //     callKafka("board-update", (Object) boardDto);
-    // }
-    // @Override
-    // public void delete(DeleteDto deleteDto)
-    // {
-    //     callKafka("board-delete", (Object) deleteDto);
-    // }
-    // @Override
-    // public void detailDelete(DetailDeleteDto detailDeleteDto)
-    // {
-    //     callKafka("board-delete-detail", (Object) detailDeleteDto);
-    // }
     
-    // Kafka
-    // @KafkaListener
-    // (
-    //     topics = "board-insert", 
-    //     groupId = "board",
-    //     containerFactory = "boardDtoKafkaListenerContainerFactory"
-    // )
-    // @Transactional(propagation = Propagation.REQUIRED)
-    // public void insert(BoardDto boardDto, Acknowledgment ack)
-    // {
-    //     Board insBoard = Board.builder()
-    //                           .user_id(boardDto.getUser_id())
-    //                           .scope_of_disclosure(boardDto.getScope_of_disclosure())
-    //                           .content(boardDto.getContent())
-    //                           .build();
-    //     Board returnBoard = repoINS(insBoard, boardDto);
-    //     redisService.newBoardMessage(boardDto.getScope_of_disclosure(), boardDto.getUser_id(), (Object) returnBoard);
-    //     ack.acknowledge();
-    // }
-
-    // @KafkaListener
-    // (
-    //     topics = "board-update",
-    //     groupId = "board",
-    //     containerFactory = "boardDtoKafkaListenerContainerFactory"
-    // )
-    // @Transactional(propagation = Propagation.REQUIRED)
-    // public void update(BoardDto boardDto, Acknowledgment ack)
-    // {
-    //     Board updBoard = Board.builder()
-    //                           .board_id(boardDto.getBoard_id())
-    //                           .user_id(boardDto.getUser_id())
-    //                           .scope_of_disclosure(boardDto.getScope_of_disclosure())
-    //                           .fulfillment_or_not(boardDto.getFulfillment_or_not())
-    //                           .fulfillment_time(boardDto.getFulfillment_time())
-    //                           .content(boardDto.getContent())
-    //                           .update_time(LocalDateTime.now())
-    //                           .build();
-    //     repoUPD(updBoard, boardDto);
-
-        
-    //     ack.acknowledge();
-    // }
-
-    // @KafkaListener
-    // (
-    //     topics = "board-delete", 
-    //     groupId = "board",
-    //     containerFactory = "delKafkaListenerContainerFactory"
-    // )
-    // @Transactional(propagation = Propagation.REQUIRED)
-    // public void delete(DeleteDto deleteDto, Acknowledgment ack)
-    // {
-    //     /**
-    //      *  Todo -> reply -> board
-    //      */
-    //     repoDel(deleteDto);
-    //     ack.acknowledge();
-    // }
-
-    // @KafkaListener
-    // (
-    //     topics = "board-delete-detail",
-    //     groupId = "board",
-    //     containerFactory = "detailDelKafkaListenerContainerFactory"
-    // )
-    // @Transactional(propagation = Propagation.REQUIRED)
-    // public void detailDelete(DetailDeleteDto detailDeleteDto, Acknowledgment ack)
-    // {
-    //     /**
-    //      * Todo -> reply -> board
-    //      */
-    //     repoDetailDel(detailDeleteDto);
-    //     ack.acknowledge();
-    // }
     @Override
     public void insert(BoardDto boardDto)
     {
@@ -211,35 +108,23 @@ public class BoardServiceImpl implements BoardService{
      * Q. 위에서 A가 없는이유? 전체공개라서, CC의 경우 A를 볼 수 없기떄문에 친구목록 조회 시 거를 것임
      */
     @Override
-    public List<BoardListDto> getBoard(Long user_id, Integer limit, Long board_id)
+    public List<BoardListDto> getBoard(GetBoardDto getBoardDto)
     {
-        limit = limit <= 0 ? 0 : limit;
-        board_id = board_id == null ? Long.MAX_VALUE : board_id;
-        Map<String, List<Long>> followList = this.userList(user_id);
-        // isThereCache(user_id);
-        
-        // Map<String, Object> userIdList = (Map<String, Object>) Optional.ofNullable(redisService.getRedis(user_id.toString())).orElse(new HashMap());
-        // // List<Long> aUserList = (List<Long>) Optional.ofNullable(userIdList.get("A")).orElse(new ArrayList<>());
-        // List<Long> fUserList = (List<Long>) Optional.ofNullable(userIdList.get("F")).orElse(new ArrayList<>());
-        // List<Long> cUserList = (List<Long>) Optional.ofNullable(userIdList.get("C")).orElse(new ArrayList<>());
-        // // List<BoardListDto> boardDto = boardRepository.getBoardList(aUserList, fUserList, cUserList, board_id, limit);
-        // List<BoardListDto> boardDto = boardRepository.getBoardList(fUserList, cUserList, board_id, limit);
-        List<BoardListDto> boardDto = boardRepository.getBoardList(followList.get("F"), followList.get("C"), board_id, limit);
+        List<BoardListDto> boardDto = boardRepository.getBoardList(getBoardDto.getUserId(), getBoardDto.getFollowIds(), getBoardDto.getGroupIds());
 
         return boardDto;
     }
 
     @Override
-    public BoardDetailDto getDetailBoard(Long board_id, Long user_id)
+    public BoardDetailDto getDetailBoard(Long boardId)
     {
         // isThereCache(user_id);
         // List<Long> user_id_list = (List<Long>) redisService.getRedis(user_id.toString());
         // Map<String, Object> user_id_list = (Map<String, Object>) redisService.getRedis(user_id.toString());
         // BoardDetailDto boardList    = boardRepository.getDetailBoard(board_id, (List<Long>) user_id_list.get("F"));
-        Map<String, List<Long>> followList = this.userList(user_id);
-        BoardDetailDto boardList    = boardRepository.getDetailBoard(board_id, followList.get("F"));
-        List<TodolistDto> todolist  = boardRepository.getTodolist(board_id);
-        List<ReplyDto> reply        = boardRepository.getReply(board_id);
+        BoardDetailDto boardList    = boardRepository.getDetailBoard(boardId);
+        List<TodolistDto> todolist  = boardRepository.getTodolist(boardId);
+        List<ReplyDto> reply        = boardRepository.getReply(boardId);
 
         boardList.setTodolist(todolist);
         boardList.setReply(reply);

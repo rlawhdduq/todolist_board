@@ -1,4 +1,4 @@
-package todolist.board.repository;
+package todolist.board.repository.rest;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.query.Param;
 import todolist.board.domain.Todolist;
 
-@Repository
+@Repository("RestTodoRepo")
 public interface TodolistRepository extends JpaRepository<Todolist, Long>{
 
     @Modifying

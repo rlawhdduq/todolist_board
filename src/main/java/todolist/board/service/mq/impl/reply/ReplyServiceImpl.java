@@ -15,7 +15,7 @@ import todolist.board.domain.Reply;
 import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.reply.ReplyDto;
-import todolist.board.repository.ReplyRepository;
+import todolist.board.repository.mq.ReplyRepository;
 // import todolist.board.service.KafkaProducer;
 import todolist.board.service.mq.ReplyService;
 
