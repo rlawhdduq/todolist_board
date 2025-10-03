@@ -54,7 +54,7 @@ public class BoardServiceImpl implements BoardService{
     private String gatewayUrl;
     
     @Override
-    public void insert(BoardDto boardDto)
+    public Long insert(BoardDto boardDto)
     {
         Board insBoard = Board.builder()
                               .user_id(boardDto.getUser_id())
@@ -63,9 +63,10 @@ public class BoardServiceImpl implements BoardService{
                               .build();
         Board returnBoard = repoINS(insBoard, boardDto);
         webClient.post().uri(gatewayUrl+"/noti").bodyValue(returnBoard).retrieve().bodyToMono(String.class).block();
+        return returnBoard.getBoard_id();
     }
     @Override
-    public void update(BoardDto boardDto)
+    public Long update(BoardDto boardDto)
     {
         Board updBoard = Board.builder()
                         .board_id(boardDto.getBoard_id())
@@ -77,6 +78,7 @@ public class BoardServiceImpl implements BoardService{
                         .update_time(LocalDateTime.now())
                         .build();
         repoUPD(updBoard, boardDto);
+        return updBoard.getBoard_id();
     }
     @Override
     public void delete(Long boardId, Long userId)
@@ -118,10 +120,6 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public BoardDetailDto getDetailBoard(Long boardId)
     {
-        // isThereCache(user_id);
-        // List<Long> user_id_list = (List<Long>) redisService.getRedis(user_id.toString());
-        // Map<String, Object> user_id_list = (Map<String, Object>) redisService.getRedis(user_id.toString());
-        // BoardDetailDto boardList    = boardRepository.getDetailBoard(board_id, (List<Long>) user_id_list.get("F"));
         BoardDetailDto boardList    = boardRepository.getDetailBoard(boardId);
         List<TodolistDto> todolist  = boardRepository.getTodolist(boardId);
         List<ReplyDto> reply        = boardRepository.getReply(boardId);
@@ -131,12 +129,6 @@ public class BoardServiceImpl implements BoardService{
 
         return boardList;
     }
-
-    // Private Method
-    // private void callKafka(String topic, Object dto)
-    // {
-    //     kafka.sendMessage(topic, dto);
-    // }
 
     @Transactional(propagation = Propagation.REQUIRED)
     private Board repoINS(Board board, BoardDto boardDto)
@@ -181,28 +173,4 @@ public class BoardServiceImpl implements BoardService{
         boardRepository.detailDelete(boardIds, userId);
     }
 
-    // private void isThereCache(Long user_id)
-    // {
-    //     if(!redisService.existKey(user_id.toString()))
-    //     {
-    //         userList(user_id);
-    //     }
-    // }
-
-    private Map<String, List<Long>> userList(Long user_id)
-    {
-        /*
-         * 캐시 조회 후 저장 
-         * Restful
-         */
-        Map<String, List<Long>> userList = webClient.get()
-                                        .uri(followUrl+"?user_id={user_id}", user_id)
-                                        .retrieve()
-                                        .bodyToMono(new ParameterizedTypeReference<Map<String, List<Long>>>() {}).block();
-        return userList;
-    }
-
 }
-
-// 비동기 메시지 큐 방식(카프카, 레디스 사용)에서 RestApi 방식으로 구현방향을 변경함에 따라 기존에 사용하던 의존성들을 주석처리한다.
-// 비동기 메시지 큐 방식은 RestApi 방식으로 구현을 마친 후 성능개선을 위해 해당방식으로 변경할 때 다시 주석을 풀고 사용하자.
