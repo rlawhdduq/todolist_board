@@ -60,15 +60,16 @@ public class BoardRestApi {
     }
 
     @RequestMapping(method=RequestMethod.POST)
-    public void insertBoard(@RequestBody BoardDto boardDto) {
-        boardService.insert(boardDto);
-        return;
+    public Long insertBoard(@RequestBody BoardDto boardDto)
+    {
+        Long boardId = boardService.insert(boardDto);
+        return boardId;
     }
     @RequestMapping(method=RequestMethod.PUT)
-    public void updateBoard(@RequestBody BoardDto boardDto)
+    public Long updateBoard(@RequestBody BoardDto boardDto)
     {
-        boardService.update(boardDto);
-        return;
+        Long boardId = boardService.update(boardDto);
+        return boardId;
     }
     @RequestMapping(method=RequestMethod.DELETE)
     public void deleteBoard(@RequestParam Long boardId, @RequestParam Long userId)
