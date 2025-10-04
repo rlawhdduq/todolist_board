@@ -118,6 +118,13 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
+    public List<BoardListDto> getAllBoard()
+    {
+        List<BoardListDto> allBoard = boardRepository.getAllBoardList();
+        return allBoard;
+    }
+
+    @Override
     public BoardDetailDto getDetailBoard(Long boardId)
     {
         BoardDetailDto boardList    = boardRepository.getDetailBoard(boardId);

@@ -48,6 +48,13 @@ public class BoardRestApi {
         List<BoardListDto> boardList = boardService.getBoard(getBoardDto);
         return boardList;
     }
+
+    @RequestMapping(path="/all", method=RequestMethod.GET)
+    public List<BoardListDto> getAllBoard()
+    {
+        List<BoardListDto> boardList = boardService.getAllBoard();
+        return boardList;
+    }
     
     /*
      * 이것도 전체 게시글 조회에서 만들어진 로직에 + board_id만 넣으면 된다.

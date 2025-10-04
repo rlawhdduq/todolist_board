@@ -36,6 +36,18 @@ public interface BoardRepository extends JpaRepository<Board, Long>{
             )
     List<BoardListDto> getBoardList(@Param("board_id") Long board_id, @Param("followIds") List<Long> followIds, @Param("groupIds") List<Long> groupIds);
 
+    @Query( 
+            "Select new todolist.board.dto.board.BoardListDto(b.board_id, b.user_id, b.scope_of_disclosure, b.create_time, b.fulfillment_time, b.content) "+
+            "From Board as b "+
+            "Where "+
+            // "((scope_of_disclosure = 'A' and user_id in (:aUserList) and status = 'Y') or " +
+            "scope_of_disclosure = 'A' and " +
+            "status = 'Y' "+
+            "Order by board_id desc " +
+            "Limit :limit "
+            )
+    List<BoardListDto> getAllBoardList();
+    
     @Query("Select new todolist.board.dto.board.BoardDetailDto(b.board_id, b.user_id, b.scope_of_disclosure, b.fulfillment_or_not, b.create_time, b.fulfillment_time, b.content) From Board as b Where b.board_id = :board_id and status = 'Y'")
     BoardDetailDto getDetailBoard(@Param("board_id") Long board_id);
     @Query("Select new todolist.board.dto.todolist.TodolistDto(t.todolist_id, t.board_id, t.create_time, t.todo_type, t.todo_type_detail, t.todo_unit, t.todo_number, t.fulfillment_or_not) From Todolist as t Where t.board_id = :board_id and status = 'Y'")
