@@ -20,12 +20,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
 import todolist.board.domain.Board;
-import todolist.board.dto.delete.DetailDeleteDto;
-import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.board.BoardDetailDto;
 import todolist.board.dto.board.BoardDto;
 import todolist.board.dto.board.BoardListDto;
-import todolist.board.dto.board.GetBoardDto;
 import todolist.board.dto.reply.ReplyDto;
 import todolist.board.dto.todolist.TodolistDto;
 import todolist.board.repository.rest.BoardRepository;
@@ -110,9 +107,13 @@ public class BoardServiceImpl implements BoardService{
      * Q. 위에서 A가 없는이유? 전체공개라서, CC의 경우 A를 볼 수 없기떄문에 친구목록 조회 시 거를 것임
      */
     @Override
-    public List<BoardListDto> getBoard(GetBoardDto getBoardDto)
+    public List<BoardListDto> getBoard(Long userId)
     {
-        List<BoardListDto> boardDto = boardRepository.getBoardList(getBoardDto.getUserId(), getBoardDto.getFollowIds(), getBoardDto.getGroupIds());
+        // F: 친구, G: 그룹, C: 컴퍼니?
+        ParameterizedTypeReference<Map<String, List<Long>>> responseType = 
+    new ParameterizedTypeReference<Map<String, List<Long>>>() {};
+        Map<String, List<Long>> idsList = webClient.get().uri(followUrl+"/"+userId).retrieve().bodyToMono(responseType).block();
+        List<BoardListDto> boardDto = boardRepository.getBoardList(userId, idsList.get("F"), idsList.getOrDefault("G", null), idsList.get("A"));
 
         return boardDto;
     }

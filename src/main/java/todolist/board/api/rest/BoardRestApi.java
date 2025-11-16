@@ -42,10 +42,10 @@ public class BoardRestApi {
      *  2. user_id를 가지고 follow 서비스를 호출하여 현재 들어온 user_id의 친구 목록을 가져온다.
      *  => 이렇게되면 게시글과 친구목록의 결합도가 상승하겠지만 방법이 없다. 추후 mq를 도입하게 되면 이부분은 캐싱처리가 될 것이기때문에 아키텍쳐간 결합도가 줄어들 것이다.
      */
-    @RequestMapping(method=RequestMethod.GET)
-    public List<BoardListDto> getBoard(GetBoardDto getBoardDto)
+    @RequestMapping(path="{userId}", method=RequestMethod.GET)
+    public List<BoardListDto> getBoard(@PathVariable Long userId)
     {
-        List<BoardListDto> boardList = boardService.getBoard(getBoardDto);
+        List<BoardListDto> boardList = boardService.getBoard(userId);
         return boardList;
     }
 

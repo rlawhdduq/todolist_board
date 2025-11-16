@@ -30,11 +30,11 @@ public interface BoardRepository extends JpaRepository<Board, Long>{
             "From Board as b "+
             "Where "+
             "status = 'Y' and " +
-            "( board_id = :board_id or user_id in (:followIds) or user_id in (:groupIds) ) " +
+            "( board_id = :board_id or user_id in (:followIds) or user_id in (:groupIds) or user_id in (:openIds) ) " +
             "Order by board_id desc " +
             "Limit 20 "
             )
-    List<BoardListDto> getBoardList(@Param("board_id") Long board_id, @Param("followIds") List<Long> followIds, @Param("groupIds") List<Long> groupIds);
+    List<BoardListDto> getBoardList(@Param("board_id") Long board_id, @Param("openIds") List<Long> openIds, @Param("followIds") List<Long> followIds, @Param("groupIds") List<Long> groupIds);
 
     @Query( 
             "Select new todolist.board.dto.board.BoardListDto(b.board_id, b.user_id, b.scope_of_disclosure, b.create_time, b.fulfillment_time, b.content) "+
