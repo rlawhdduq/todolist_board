@@ -113,7 +113,7 @@ public class BoardServiceImpl implements BoardService{
         ParameterizedTypeReference<Map<String, List<Long>>> responseType = 
     new ParameterizedTypeReference<Map<String, List<Long>>>() {};
         Map<String, List<Long>> idsList = webClient.get().uri(followUrl+"/"+userId).retrieve().bodyToMono(responseType).block();
-        List<BoardListDto> boardDto = boardRepository.getBoardList(userId, idsList.get("F"), idsList.getOrDefault("G", null), idsList.get("A"));
+        List<BoardListDto> boardDto = boardRepository.getBoardList(userId, idsList.get("F"), idsList.getOrDefault("C", null), idsList.get("A"));
 
         return boardDto;
     }
