@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import org.springframework.data.repository.query.Param;
 import todolist.board.domain.Todolist;
+import todolist.board.dto.todolist.TodolistDto;
 
 @Repository("RestTodoRepo")
 public interface TodolistRepository extends JpaRepository<Todolist, Long>{
@@ -26,4 +27,14 @@ public interface TodolistRepository extends JpaRepository<Todolist, Long>{
     @Modifying
     @Query(value = "Update todolist Set status = 'N', update_time = current_timestamp Where board_id in (:board_id_lists)", nativeQuery = true)
     void detailDelete(@Param("board_id_list") List<Long> board_id_list);
+
+    @Query(
+        "Select new todolist.board.dto.todolist.TodolistDto(t.todolist_id, t.board_id, t.create_time, t.todo_type, t.todo_type_detail, t.todo_number, t.todo_unit, t.fulfillment_or_not, t.update_time) " +
+        "From Todolist as t "+
+        "Where "+
+        "status = 'Y' and "+
+        "board_id = :board_id "+
+        "Order by create_time desc"
+    )
+    List<TodolistDto> getTodolist(@Param("board_id") Long board_id);
 }

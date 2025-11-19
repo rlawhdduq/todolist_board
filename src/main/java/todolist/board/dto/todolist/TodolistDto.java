@@ -33,4 +33,18 @@ public class TodolistDto {
         this.todo_number = todo_number;
         this.fulfillment_or_not = fulfillment_or_not;
     }
+
+    public TodolistDto(Long todolist_id, Long board_id, LocalDateTime create_time, String todo_type,
+    String todo_type_detail, Short todo_number, String todo_unit, Character fulfillment_or_not, LocalDateTime update_time)
+    {
+        this.todolist_id = todolist_id;
+        this.board_id = board_id;
+        this.create_time = create_time;
+        this.todo_type = todo_type;
+        this.todo_type_detail = todo_type_detail;
+        this.todo_number = todo_number;
+        this.todo_unit = todo_unit;
+        this.fulfillment_or_not = fulfillment_or_not;
+        this.update_time = update_time;
+    }
 }

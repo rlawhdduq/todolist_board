@@ -59,7 +59,7 @@ public class BoardServiceImpl implements BoardService{
                               .content(boardDto.getContent())
                               .build();
         Board returnBoard = repoINS(insBoard, boardDto);
-        webClient.post().uri(gatewayUrl+"/noti").bodyValue(returnBoard).retrieve().bodyToMono(String.class).block();
+        webClient.post().uri(gatewayUrl+"/noti").bodyValue(returnBoard).retrieve().bodyToMono(String.class).subscribe(response -> System.out.println("알림 전송 성공: "+response), error -> System.out.println("알림 전송 실패: "+error.getMessage()));
         return returnBoard.getBoard_id();
     }
     @Override

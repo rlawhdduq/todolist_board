@@ -8,7 +8,7 @@ import todolist.board.dto.todolist.TodolistDto;
 
 public interface TodolistService {
 
-    List<TodolistDto> select(Long board_id);
+    List<TodolistDto> getTodolist(Long board_id);
 
     void insert(TodolistDto todolistDto);
     void update(TodolistDto todolistDto);

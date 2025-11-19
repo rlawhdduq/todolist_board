@@ -35,4 +35,15 @@ public class BoardDto {
         this.content = content;
         this.update_time = update_time;
     }
+
+    // Insert용
+    public BoardDto(Long user_id, String scope_of_disclosure, Character fulfillment_or_not, 
+        LocalDateTime fulfillment_time, String content)
+    {
+        this.user_id = user_id;
+        this.scope_of_disclosure = scope_of_disclosure;
+        this.fulfillment_or_not = fulfillment_or_not;
+        this.fulfillment_time = fulfillment_time;
+        this.content = content;
+    }
 }

@@ -24,7 +24,7 @@ public class TodolistRestApi {
     @RequestMapping(path="/{boardId}", method=RequestMethod.GET)
     public List<TodolistDto> getTodolist(@PathVariable Long boardId)
     {
-        List<TodolistDto> todolists = todolistService.select(boardId);
+        List<TodolistDto> todolists = todolistService.getTodolist(boardId);
         return todolists;
     }
     @RequestMapping(method=RequestMethod.POST)
