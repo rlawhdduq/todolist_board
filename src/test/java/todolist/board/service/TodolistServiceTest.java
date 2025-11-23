@@ -21,7 +21,6 @@ import todolist.board.dto.delete.DeleteDto;
 import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.dto.todolist.TodolistDto;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 public class TodolistServiceTest {
     

@@ -21,7 +21,6 @@ import todolist.board.dto.reply.ReplyDto;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 public class ReplyServiceTest {
     @Autowired

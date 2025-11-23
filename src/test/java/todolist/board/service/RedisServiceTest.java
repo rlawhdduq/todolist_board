@@ -17,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import todolist.board.dto.redis.RedisUserListDto;
 
-@SpringBootTest
 public class RedisServiceTest {
 
     private static final Logger log = LoggerFactory.getLogger(RedisServiceTest.class);

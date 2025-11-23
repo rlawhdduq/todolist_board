@@ -26,7 +26,7 @@ public interface BoardRepository extends JpaRepository<Board, Long>{
     void detailDelete(@Param("board_id") List<Long> board_id_list, @Param("user_id") Long user_id);
 
     @Query( 
-            "Select new todolist.board.dto.board.BoardListDto(b.board_id, b.user_id, b.scope_of_disclosure, b.create_time, b.fulfillment_time, b.content) "+
+            "Select new todolist.board.dto.board.BoardListDto(b.board_id, b.user_id, b.writer_id, b.scope_of_disclosure, b.create_time, b.fulfillment_time, b.content) "+
             "From Board as b "+
             "Where "+
             "status = 'Y' and " +
@@ -37,7 +37,7 @@ public interface BoardRepository extends JpaRepository<Board, Long>{
     List<BoardListDto> getBoardList(@Param("user_id") Long board_id, @Param("followIds") List<Long> openIds, @Param("communityIds") List<Long> followIds, @Param("allIds") List<Long> groupIds);
 
     @Query( 
-            "Select new todolist.board.dto.board.BoardListDto(b.board_id, b.user_id, b.scope_of_disclosure, b.create_time, b.fulfillment_time, b.content) "+
+            "Select new todolist.board.dto.board.BoardListDto(b.board_id, b.user_id, b.writer_id, b.scope_of_disclosure, b.create_time, b.fulfillment_time, b.content) "+
             "From Board as b "+
             "Where "+
             // "((scope_of_disclosure = 'A' and user_id in (:aUserList) and status = 'Y') or " +
@@ -52,6 +52,6 @@ public interface BoardRepository extends JpaRepository<Board, Long>{
     BoardDetailDto getDetailBoard(@Param("board_id") Long board_id);
     @Query("Select new todolist.board.dto.todolist.TodolistDto(t.todolist_id, t.board_id, t.create_time, t.todo_type, t.todo_type_detail, t.todo_unit, t.todo_number, t.fulfillment_or_not) From Todolist as t Where t.board_id = :board_id and status = 'Y'")
     List<TodolistDto> getTodolist(@Param("board_id") Long board_id);
-    @Query("Select new todolist.board.dto.reply.ReplyDto(r.reply_id, r.board_id, r.user_id, r.parent_id, r.content, r.reply_depth, r.create_time) From Reply as r Where r.board_id = :board_id and status = 'Y'")
+    @Query("Select new todolist.board.dto.reply.ReplyDto(r.reply_id, r.board_id, r.user_id, r.writer_id, r.parent_id, r.content, r.reply_depth, r.create_time) From Reply as r Where r.board_id = :board_id and status = 'Y'")
     List<ReplyDto> getReply(@Param("board_id") Long board_id);
 }
