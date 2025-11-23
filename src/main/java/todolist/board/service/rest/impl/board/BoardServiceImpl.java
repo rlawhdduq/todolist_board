@@ -55,6 +55,7 @@ public class BoardServiceImpl implements BoardService{
     {
         Board insBoard = Board.builder()
                               .user_id(boardDto.getUser_id())
+                              .writer_id(boardDto.getWriter_id())
                               .scope_of_disclosure(boardDto.getScope_of_disclosure())
                               .content(boardDto.getContent())
                               .build();

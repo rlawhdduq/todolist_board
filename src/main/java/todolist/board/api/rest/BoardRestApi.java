@@ -6,9 +6,6 @@ import lombok.RequiredArgsConstructor;
 import todolist.board.dto.board.BoardDetailDto;
 import todolist.board.dto.board.BoardDto;
 import todolist.board.dto.board.BoardListDto;
-import todolist.board.dto.board.GetBoardDto;
-import todolist.board.dto.delete.DeleteDto;
-import todolist.board.dto.delete.DetailDeleteDto;
 import todolist.board.service.rest.BoardService;
 
 import org.springframework.web.bind.annotation.PathVariable;

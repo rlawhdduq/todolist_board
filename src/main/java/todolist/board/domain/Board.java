@@ -31,6 +31,8 @@ public class Board {
 
     @Column(nullable = false)
     private Long user_id;
+    @Column(nullable = false, length = 50) // [추가] 화면 표시용 아이디
+    private String writer_id;
     @Column(nullable = false)
     private String scope_of_disclosure;
     @Column(insertable = false, updatable = true)

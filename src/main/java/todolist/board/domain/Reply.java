@@ -33,6 +33,8 @@ public class Reply {
     private Long board_id;
     @Column
     private Long user_id;
+    @Column(nullable = false, length = 50) // [추가] 화면 표시용 아이디
+    private String writer_id;
     @Column
     private Long parent_id;
     @Column
